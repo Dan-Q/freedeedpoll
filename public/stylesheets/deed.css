@@ -1,0 +1,147 @@
+/* General */
+
+body {
+  margin: 0 0 2em;
+  padding: 0;
+  color: #333;
+  font-family: sans-serif;
+  font-size: 1em;
+}
+
+a, a:visited {
+  color: #cb842f;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Header */
+
+header {
+  display: block;
+  background: url(http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/themes/humanity/images/ui-bg_glass_25_cb842e_1x400.png) 50% 50% repeat-x;
+  padding: 0.25em 1em;
+  border-bottom: 1px solid #333;
+}
+
+header a {
+}
+
+header hgroup h1,
+header hgroup h2 {
+  padding: 0;
+  margin: 0;
+}
+
+header hgroup h1 {
+  font-size: 180%;
+  color: #000;
+}
+
+header hgroup h2 {
+  font-size: 120%;
+  color: #fff;
+}
+
+/* Main */
+
+#main aside,
+#main section {
+  display: block;
+  margin: 0.5em 1em;
+}
+
+#main aside {
+  float: right;
+  width: 30%;
+  border: 1px solid #333;
+  padding: 0.5em 1em;
+  background: #fff;
+}
+
+#more_info li {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+
+/* Deed Poll form */
+
+#deed_poll_form h4 {
+  text-decoration: underline;
+}
+
+#deed_poll_form .form_section {
+  border-bottom: 1px dashed #333;
+  margin: 0.5em 1em;
+  padding: 0.5em 1em 1em;
+}
+
+#deed_poll_form .field {
+  clear: left;
+  padding: 0;
+  margin: 0.1em 0;
+}
+
+#deed_poll_form .field label {
+  font-weight: bold;
+  float: left;
+  text-align: right;
+  width: 12em;
+  padding: 2px 4px 0 0;
+}
+
+#deed_poll_form .field input.text {
+  width: 18em;
+}
+
+#deed_poll_form .field input#postcode {
+  width: 6em;
+}
+
+#deed_poll_form .witness {
+  float: left;
+}
+
+#deed_poll_form #witness2 {
+  float: right;
+}
+
+#deed_poll_form .witness h4 {
+  text-align: center;
+}
+
+#deed_poll_form .explanation {
+  font-size: 80%;
+}
+
+#deed_poll_form #recaptcha {
+  clear: both;
+}
+
+#deed_poll_form #submit_button {
+  text-align: center;
+}
+
+#deed_poll_form #submit_button input {
+  font-size: 120%;
+}
+
+/* Footer */
+
+footer {
+  display: block;
+  background: #333;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  color: #aaa;
+  font-size: 80%;
+  padding: 0.5em 1em;
+}
+
+footer p {
+  padding: 0;
+  margin: 1px 0;
+}
+
+footer a {
+}

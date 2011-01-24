@@ -1,0 +1,37 @@
+!!! 5
+%html
+  %head
+    %title Free UK Deed Poll - Instant free online UK Deed Poll to print and use
+    /[if lt IE 9]
+      %script{:type => 'text/javascript', :src => 'http://html5shim.googlecode.com/svn/trunk/html5.js'}
+    %script{:type => 'text/javascript', :src => 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js'}
+    %script{:type => 'text/javascript', :src => 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js'}
+    %script{:type => 'text/javascript', :src => '/javascripts/modernizr-1.6.min.js'}
+    %script{:type => 'text/javascript', :src => '/javascripts/deed.js'}
+    %link{:rel => 'stylesheet', :media => 'all', :href => 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/themes/humanity/jquery-ui.css'}
+    %link{:rel => 'stylesheet', :media => 'all', :href => '/stylesheets/deed.css'}
+  
+  %body
+    %header
+      %a{:href => '/'}
+        %hgroup
+          %h1 Free UK Deed Poll
+          %h2 Instant free online UK Deed Poll to print and use
+    
+    #main
+      = yield
+
+    %footer
+      %p
+        This service is provided for free by
+        %a{:href => 'http://www.scatmania.org/', :title => "Dan Q's website and blog"} "Scatman" Dan Q
+        |
+        Yes, it's really
+        %a{:href => '/free'} completely free
+        |
+        It's also
+        %a{:href => 'http://www.scatmania.org/projects/freedeedpoll'} open-source
+        so you can read the code for yourself
+        |
+        Your details are safe - see the
+        %a{:href => '/privacy'} privacy policy

@@ -1,0 +1,131 @@
+%aside#more_info
+  %h3 How to change your name right now!
+  %ol
+    %li
+      Select "Normal Deed Poll" if you're over 18 and you were born in the United Kingdom, otherwise
+      %a{:href => '/special'} read these instructions
+      first.
+    %li
+      Fill in your old name, new name, address, and the names and addresses of your witnesses.
+      Your witnesses should be people who know you well, but who are not family members.
+      You can pick almost any new name you like, but there are
+      %a{:href => '/restrictions'} a few restrictions
+      you ought to read up on.
+    %li
+      If you're changing your first name, make sure the "First name changed?" box is checked.
+      If you're not, make sure it's not. There are some special extra words your Deed Poll will
+      need if you're changing your first name.
+    %li Solve the ReCAPTCHA by typing the two words you see into the box.
+    %li Click the "Generate Deed Poll" button at the bottom.
+    %li
+      Print your new Deed Poll onto nice, heavy paper (ideally parchment paper). Sign all the bits
+      you need to sign, and have your witnesses sign the bits they need to sign.
+    %li
+      %a{:href => '/what_next'} Contact all the people
+      who need to know about your new name!
+
+%section#intro
+  %p
+    Fill in this form and instantly get access to a free UK Deed Poll that you can just print and use.
+    No cost. No passwords. No limits. No ads.
+    %a{:href => '/free'} Why is this free?
+  
+  %p
+    When you're done, print your new Deed Poll onto nice, heavy paper (I suggest parchment paper, which
+    you can get from your favourite stationer), sign your name on it (twice - once using each name), and
+    get your witness(es) to sign it too. Congratulations, you have a new name!
+    
+  %p
+    Once you've changed your name,
+    %a{:href => '/what_next'} click here for what to do next!
+
+%section#get_started
+  %h3 Get Started
+  %form#deed_poll_form{:method => 'post', :action=> '/'}
+    #deed_poll_type.form_section
+      %h4 Type of Deed Poll
+      %p.field
+        %label{:for => 'special'} Special circumstances?
+        %select#special{:name => 'special'}
+          %option{:value => '37(1)'} Normal Deed Poll
+          %option{:value => '37(1)-1'} Normal Deed Poll (1 witness)
+          %option{:value => '11(1)'} Colonies 11(1)
+          %option{:value => '1(2)'} Abandonment clause
+          %option{:value => '1(3)'} Parental immigration
+          %option{:value => '1(4)'} Residence clause
+          %option{:value => '2(1)'} Descent clause
+          %option{:value => '4C'} Registration 4C
+      %p.explanation
+        Need
+        %a{:href => '/special'} help
+        choosing?
+
+    #your_details.form_section
+      %h4 Your Details
+      %p.field
+        %label{:for => 'old_name'} Old Name:
+        %input#old_name.text{:type => 'text', :name => 'old_name', :value => params[:old_name], :placeholder => 'Enter your old name'}
+      %p.field
+        %label{:for => 'new_name'} New Name:
+        %input#new_name.text{:type => 'text', :name => 'new_name', :value => params[:new_name], :placeholder => 'Enter your new name'}
+      %p.explanation
+        Are there any
+        %a{:href => '/restrictions'} restrictions
+        on what name you can choose?
+      %p.field
+        %label{:for => 'first_name_changed'} First name changed?
+        %input#first_name_changed.checkbox{:type => 'checkbox', :name => 'first_name_changed', :value => 1}
+      %p.field
+        %label{:for => 'date'} Date:
+        %input#date.date{:type => 'date', :name => 'date', :value => params[:date] || @today}
+      %p.field
+        %label{:for => 'address1'} Street address:
+        %input#address1.text{:type => 'text', :name => 'address1', :value => params[:address1], :placeholder => 'Enter your street address'}
+      %p.field
+        %label{:for => 'town'} Town:
+        %input#town.text{:type => 'text', :name => 'town', :value => params[:town], :placeholder => 'Enter your town'}
+      %p.field
+        %label{:for => 'county'} County:
+        %input#county.text{:type => 'text', :name => 'county', :value => params[:county], :placeholder => 'Enter your county'}
+      %p.field
+        %label{:for => 'postcode'} Postcode:
+        %input#postcode.text{:type => 'text', :name => 'postcode', :value => params[:postcode], :placeholder => 'FR3 3DP'}
+    
+    #witness1.witness.form_section
+      %h4 First Witness
+      %p.field
+        %label{:for => 'witness1_name'} Name:
+        %input#witness1_name.text{:type => 'text', :name => 'witness1_name', :value => params[:witness1_name], :placeholder => 'Enter name of first witness'}
+      %p.field
+        %label{:for => 'witness1_address1'} Street address:
+        %input#witness1_address1.text{:type => 'text', :name => 'witness1_address1', :value => params[:witness1_address1], :placeholder => 'Enter street address of first witness'}
+      %p.field
+        %label{:for => 'witness1_town'} Town:
+        %input#witness1_town.text{:type => 'text', :name => 'witness1_town', :value => params[:witness1_town], :placeholder => 'Enter town of first witness'}
+
+    #witness2.witness.form_section
+      %h4 Second Witness
+      %p.field
+        %label{:for => 'witness2_name'} Name:
+        %input#witness2_name.text{:type => 'text', :name => 'witness2_name', :value => params[:witness2_name], :placeholder => 'Enter name of second witness'}
+      %p.field
+        %label{:for => 'witness2_address1'} Street address:
+        %input#witness2_address1.text{:type => 'text', :name => 'witness2_address1', :value => params[:witness2_address1], :placeholder => 'Enter street address of second witness'}
+      %p.field
+        %label{:for => 'witness2_town'} Town:
+        %input#witness2_town.text{:type => 'text', :name => 'witness2_town', :value => params[:witness2_town], :placeholder => 'Enter town of second witness'}
+
+    #recaptcha.form_section
+      %h4 Are you a human?
+      %p.explanation
+        Prove that you're a real human:
+        = recaptcha
+    
+    #submit_button.form_section
+      %input{:type => 'submit', :value => 'Generate Deed Poll'}
+
+:javascript
+  $(function(){
+    $('#special').val('#{params[:special]}');
+    $('#first_name_changed').attr('checked', '#{params[:first_name_changed] ? 'checked' : ''}');
+  });
