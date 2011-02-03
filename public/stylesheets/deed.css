@@ -23,21 +23,22 @@ header {
   border-bottom: 1px solid #333;
 }
 
-header a {
-}
-
-header hgroup h1,
-header hgroup h2 {
+header h1,
+header h2 {
   padding: 0;
   margin: 0;
 }
 
-header hgroup h1 {
+header h1 {
   font-size: 180%;
-  color: #000;
 }
 
-header hgroup h2 {
+header h1,
+header h1 a {
+  color: #000 !important;
+}
+
+header h2 {
   font-size: 120%;
   color: #fff;
 }
