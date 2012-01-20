@@ -12,19 +12,36 @@ This project requires prawn version 0.11.1.pre or higher.
 
     gem install prawn --pre
 
-It also requires sinatra, jpoz-sinatra-recaptcha, and (in development mode), sinatra-reloader
+It also requires sinatra, jpoz-sinatra-recaptcha, haml, and (in development mode), sinatra-reloader
 
     gem sources -a http://gems.github.com
-    gem install sinatra jpoz-sinatra-recaptcha sinatra-reloader
+    gem install sinatra jpoz-sinatra-recaptcha haml sinatra-reloader
 
 The site will probably only work on a *nix-based server, as a result of it's clunky calls.
 
 Configuration
 -------------
 
-Rename the provided recaptcha.configuration.rb.example file to recaptcha.configuration.rb
-and adjust it to contain a valid ReCaptcha public and private key. You can get these
-from https://www.google.com/recaptcha/admin/
+The service is "ready-to-run" (see Running, below), but you might like to look at two pieces
+of configuration first:
+
+1. reCAPTCHA
+
+To reduce the potential for abuse of your service, you might like to enable reCAPTCHA (if you're
+just setting it up for yourself, there's no need). To do this, rename the provided
+recaptcha.configuration.rb.example file to recaptcha.configuration.rb and adjust it to contain
+a valid ReCaptcha public and private key. You can get these from
+https://www.google.com/recaptcha/admin/
+
+2. Fonts
+
+This version of freedeedpoll uses Olde English (http://www.dafont.com/olde-english.font) and
+Linux Libertine (http://www.dafont.com/linux-libertine.font) free fonts. You're able to
+customise this by replacing the fonts in the lib/fonts directory and changing the references
+in the deed.rb script.
+
+Running
+-------
 
 To run in development mode:
 
@@ -32,9 +49,6 @@ To run in development mode:
 
 To run in production mode, deploy onto your server. This has been tested only using Phusion
 Passenger on Apache as a deployment platform.
-
-The live version of the site uses nonfree fonts. You will need to supply your own fonts in
-the lib/fonts directory and reference them appropriately from the deed.rb script before use.
 
 License
 -------

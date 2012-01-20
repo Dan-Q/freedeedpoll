@@ -1,15 +1,21 @@
 #!/usr/bin/ruby
 require 'rubygems'
 require 'sinatra'                          # gem install sinatra
+require 'haml'                             # gem install haml
 require 'sinatra/reloader' if development? # gem install sinatra-reloader
 require 'sinatra/recaptcha'                # gem install jpoz-sinatra-recaptcha
 require 'prawn'
 require 'prawn/measurement_extensions'
-require 'recaptcha.configuration'
 
-configure do
-   Sinatra::ReCaptcha.public_key  = RECAPTCHA_PUBLIC_KEY
-   Sinatra::ReCaptcha.private_key = RECAPTCHA_PRIVATE_KEY
+if File::exists?('recaptcha.configuration.rb')
+  RECAPTCHA_ENABLED = true
+  require 'recaptcha.configuration'
+  configure do
+    Sinatra::ReCaptcha.public_key  = RECAPTCHA_PUBLIC_KEY
+    Sinatra::ReCaptcha.private_key = RECAPTCHA_PRIVATE_KEY
+  end
+else
+  RECAPTCHA_ENABLED = false
 end
 
 MONTH_NAMES = %w{January February March April May June July August September October November December}
@@ -57,16 +63,16 @@ get '/what_next' do
 end
 
 post '/' do
-  if recaptcha_correct?
+  if !RECAPTCHA_ENABLED || recaptcha_correct?
     pdf = Prawn::Document.new(:page_size => 'A4',
                               :top_margin => 3.cm,
                               :bottom_margin => 3.cm,
                               :left_margin => 2.4.cm,
                               :right_margin => 2.4.cm)
     pdf.font_families.update(
-      'Title' => { :normal => 'lib/fonts/oldengl.ttf' },
-      'Text' => { :normal => 'lib/fonts/goudos.ttf' },
-      'Bold' => { :normal => 'lib/fonts/goudosb.ttf' }
+      'Title' => { :normal => 'lib/fonts/OldeEnglish.ttf' },
+      'Text' => { :normal => 'lib/fonts/LinLibertine_R.ttf' },
+      'Bold' => { :normal => 'lib/fonts/LinLibertine_RB.ttf' }
     )
     
     pdf.font('Title')
@@ -111,13 +117,13 @@ post '/' do
     ], { :width => 460, :cell_style => { :align => :center, :borders => [] } }).draw
     
     pdf.line_width = 1
-    pdf.line(107, 652, 352, 652)
+    pdf.line(127, 650, 332, 650)
     pdf.stroke
     pdf.line_width = 0.5
-    pdf.line(33, 195, 193, 195)
-    pdf.line(260, 195, 420, 195)
-    pdf.line(33, 83, 193, 83)
-    pdf.line(260, 83, 420, 83) if witnesses == 2
+    pdf.line(33, 222, 193, 222)
+    pdf.line(260, 222, 420, 222)
+    pdf.line(33, 113, 193, 113)
+    pdf.line(260, 113, 420, 113) if witnesses == 2
     pdf.stroke
 
                           
