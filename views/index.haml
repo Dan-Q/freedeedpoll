@@ -15,7 +15,8 @@
       If you're changing your first name, make sure the "First name changed?" box is checked.
       If you're not, make sure it's not. There are some special extra words your Deed Poll will
       need if you're changing your first name.
-    %li Solve the ReCAPTCHA by typing the two words you see into the box.
+    - if RECAPTCHA_ENABLED
+      %li Solve the ReCAPTCHA by typing the two words you see into the box.
     %li Click the "Generate Deed Poll" button at the bottom.
     %li
       Print your new Deed Poll onto nice, heavy paper (ideally parchment paper). Sign all the bits
@@ -115,11 +116,12 @@
         %label{:for => 'witness2_town'} Town:
         %input#witness2_town.text{:type => 'text', :name => 'witness2_town', :value => params[:witness2_town], :placeholder => 'Enter town of second witness'}
 
-    #recaptcha.form_section
-      %h4 Are you a human?
-      %p.explanation
-        Prove that you're a real human:
-        = recaptcha
+    - if RECAPTCHA_ENABLED
+      #recaptcha.form_section
+        %h4 Are you a human?
+        %p.explanation
+          Prove that you're a real human:
+          = recaptcha
     
     #submit_button.form_section
       %input{:type => 'submit', :value => 'Generate Deed Poll'}
