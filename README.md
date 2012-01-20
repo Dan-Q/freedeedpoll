@@ -25,17 +25,13 @@ Configuration
 The service is "ready-to-run" (see Running, below), but you might like to look at two pieces
 of configuration first:
 
-1. reCAPTCHA
-
-To reduce the potential for abuse of your service, you might like to enable reCAPTCHA (if you're
+reCAPTCHA: to reduce the potential for abuse of your service, you might like to enable reCAPTCHA (if you're
 just setting it up for yourself, there's no need). To do this, rename the provided
 recaptcha.configuration.rb.example file to recaptcha.configuration.rb and adjust it to contain
 a valid ReCaptcha public and private key. You can get these from
 https://www.google.com/recaptcha/admin/
 
-2. Fonts
-
-This version of freedeedpoll uses Olde English (http://www.dafont.com/olde-english.font) and
+Fonts: this version of freedeedpoll uses Olde English (http://www.dafont.com/olde-english.font) and
 Linux Libertine (http://www.dafont.com/linux-libertine.font) free fonts. You're able to
 customise this by replacing the fonts in the lib/fonts directory and changing the references
 in the deed.rb script.
