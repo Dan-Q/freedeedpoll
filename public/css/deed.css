@@ -10,12 +10,76 @@ body {
   padding-bottom: 40px;
 }
 
+@media (max-width: 979px) {
+  body {
+    padding-top: 0;
+  }
+}
+
 /* Brand */
 
-.brand {
+.navbar-inverse .brand {
   color: #ddd;
 }
 
-.brand small {
+.navbar-inverse .brand small {
   color: #999;
+}
+
+.hero-unit .logo {
+  float: right;
+  height: 230px;
+}
+
+/* App */
+
+.hero-unit .buttons {
+  text-align: center;
+}
+
+.hero-unit .buttons .btn {
+  margin: 10px;
+}
+
+.wizard-panel {
+  display: none;
+}
+
+.wizard-panel.current {
+  display: block;
+}
+
+.wizard-panel .input-append input,
+.wizard-panel .input-append a,
+.wizard-panel .input-prepend input,
+.wizard-panel .input-prepend a {
+  height: 31.5px;
+  line-height: 31.5px;
+  font-size: 28px;
+}
+
+@media (min-width: 979px) {
+  .wizard-panel input.text {
+    width: 580px;
+  }
+}
+
+@media (max-width: 979px) and (min-width: 768px) {
+  .wizard-panel input.text {
+    width: 380px;
+  }
+}
+
+@media (max-width: 768px) {
+  .wizard-panel .input-append input,
+  .wizard-panel .input-append a,
+  .wizard-panel .input-prepend input,
+  .wizard-panel .input-prepend a {
+    height: 18px;
+    line-height: 18px;
+    font-size: 16px;
+  }
+  .btn-prev {
+    display: none;
+  }
 }

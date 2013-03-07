@@ -1,0 +1,175 @@
+.wizard-panel.current
+  %h2
+    What's your
+    %em old
+    name?
+  
+  %p
+    .control-group.input-append
+      %input#old_name.text.required{:type => 'text', :name => 'old_name', :placeholder => 'Your old name'}
+      %a.btn.btn-primary.btn-next{:href => '#'} Next &raquo;
+
+  %p
+    %strong How should I write my name?
+  %p
+    Write your full name, including any middle names, completely.
+
+  %p
+    %strong Should I include my title (e.g. Mr., Ms.)?
+  %p
+    No. You can include a title if you want, so long as it is a title that you would
+    normally be allowed to use. However, we'd recommend that you do not.
+
+  %p
+    %strong What will you do with this information?
+  %p
+    Your name will only be used to generate your Deed Poll. We will not keep your
+    personal information for any longer than is necessary to generate your document.
+
+-####################################################################################################-
+
+.wizard-panel
+  %h2
+    What's your
+    %em new
+    name?
+
+  %p
+    .control-group.input-prepend.input-append
+      %a.btn.btn-prev{:href => '#'} &laquo; Back
+      %input#new_name.text.required{:type => 'text', :name => 'new_name', :placeholder => 'Your new name'}
+      %a.btn.btn-primary.btn-next{:href => '#'} Next &raquo;
+
+  %p
+    %strong Are there any restrictions on the name I choose?
+  %p
+    Legally-speaking, you may choose any name you like. However, you should:
+
+  %ul
+    %li Have at least two names (a first name and a surname), though you may have more.
+    %li Not change your name to imply a title that you do not have (e.g. changing your first name to Doctor).
+    %li Spell your name using only characters in the Latin alphabet.
+    %li Ensure that your name is pronouncable.
+
+  %p
+    For more information on choosing your name, see:
+    %a{:href => '#'} choosing a name
+
+-####################################################################################################-
+
+.wizard-panel
+  %h2
+    Are you changing your first name?
+
+  %p
+    %input.hidden{:type => 'hidden', :name => 'changing_first_name', :value => '0'}
+    %input#changing_first_name.checkbox{:type => 'checkbox', :name => 'changing_first_name', :value => '1'}
+    %strong Yes
+    (check this box if you're changing your first name)
+
+  %p.clearfix
+    %a.btn.btn-large.btn-prev.pull-left{:href => '#'} &laquo; Back
+    %a.btn.btn-large.btn-primary.btn-next.pull-right{:href => '#'} Next &raquo;
+
+  %p
+    %strong Why are you asking this?
+  %p
+    If you're changing your first name, the wording of your Deed Poll needs to be slightly different. If your
+    new first name is different from your old first name - even if you're just shortening it - you must check
+    the checkbox. If your first name is the same, don't check it.
+
+-####################################################################################################-
+
+.wizard-panel
+  %h2
+    Where do you live?
+
+  .form-horizontal
+    .control-group
+      %label.control-label{:for => 'address'} Street address:
+      .controls
+        %input#address.text.required{:type => 'text', :name => 'address', :placeholder => 'Your street address'}
+    .control-group
+      %label.control-label{:for => 'town'} Town:
+      .controls
+        %input#town.text.required{:type => 'text', :name => 'town', :placeholder => 'Your town'}
+    .control-group
+      %label.control-label{:for => 'county'} County:
+      .controls
+        %input#county.text.required{:type => 'text', :name => 'county', :placeholder => 'Your county'}
+
+  %p.clearfix
+    %a.btn.btn-large.btn-prev.pull-left{:href => '#'} &laquo; Back
+    %a.btn.btn-large.btn-primary.btn-next.pull-right{:href => '#'} Next &raquo;
+
+  %p
+    %strong What will you do with this information?
+  %p
+    Your address details will only be used to generate your Deed Poll. We will not keep your
+    personal information for any longer than is necessary to generate your document.
+
+-####################################################################################################-
+
+.wizard-panel
+  %h2
+    Who's going to witness it? (Witness #1)
+
+  .form-horizontal
+    .control-group
+      %label.control-label{:for => 'witness1_name'} Name:
+      .controls
+        %input#witness1_name.text.required{:type => 'text', :name => 'witness1_name', :placeholder => 'Your street address'}
+    .control-group
+      %label.control-label{:for => 'witness1_address'} Street address:
+      .controls
+        %input#witness1_address.text.required{:type => 'text', :name => 'witness1_address', :placeholder => 'Your street address'}
+    .control-group
+      %label.control-label{:for => 'witness1_town'} Town:
+      .controls
+        %input#witness1_town.text.required{:type => 'text', :name => 'witness1_town', :placeholder => 'Your town'}
+
+  %p.clearfix
+    %a.btn.btn-large.btn-prev.pull-left{:href => '#'} &laquo; Back
+    %a.btn.btn-large.btn-primary.btn-next.pull-right{:href => '#'} Next &raquo;
+
+  %p
+    %strong Who can be a witness?
+  %p
+    Your witness should be somebody who knows you personally, but is not closely related to you. A friend
+    or co-worker is fine. Your spouse, sibling, parents or children are not.
+
+-####################################################################################################-
+
+.wizard-panel
+  %h2
+    Who's going to witness it? (Witness #2)
+
+  .form-horizontal
+    .control-group
+      %label.control-label{:for => 'witness2_name'} Name:
+      .controls
+        %input#witness2_name.text{:type => 'text', :name => 'witness2_name', :placeholder => 'Your street address'}
+    .control-group
+      %label.control-label{:for => 'witness2_address'} Street address:
+      .controls
+        %input#witness2_address.text{:type => 'text', :name => 'witness2_address', :placeholder => 'Your street address'}
+    .control-group
+      %label.control-label{:for => 'witness2_town'} Town:
+      .controls
+        %input#witness2_town.text{:type => 'text', :name => 'witness2_town', :placeholder => 'Your town'}
+
+  %p.clearfix
+    %a.btn.btn-large.btn-prev.pull-left{:href => '#'} &laquo; Back
+    %a.btn.btn-large.btn-primary.btn-next.pull-right{:href => '#'} Generate;
+
+  %p
+    %strong Do I have to have two witnesses?
+  %p
+    No, but you should. If you want to make a Deed Poll signed by only one witness, just leave the boxes blank.
+    But having a second witness helps to protect you in case the legitimacy of your Deed Poll is challenged.
+
+  %p
+    %strong This is the last question!
+  %p
+    You're almost there. When you click the "Generate" button, your Deed Poll will be generated, and you'll be able
+    to print it off and sign it.
