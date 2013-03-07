@@ -1,0 +1,21 @@
+/* Core styles */
+
+html.no-js .js,
+html.js .no-js {
+  display: none;
+}
+
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+
+/* Brand */
+
+.brand {
+  color: #ddd;
+}
+
+.brand small {
+  color: #999;
+}
