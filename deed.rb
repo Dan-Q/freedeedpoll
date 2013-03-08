@@ -83,7 +83,10 @@ class Deed < Sinatra::Base
 
   post '/' do
     redirect to('/') and return unless HotlinkPrevention.valid?(params[:hotlink_code])
+    haml :result
+  end
 
+  post '/deed-poll.pdf' do
     pdf = Prawn::Document.new(:page_size => 'A4',
                               :top_margin => 3.cm,
                               :bottom_margin => 3.cm,
@@ -150,6 +153,7 @@ class Deed < Sinatra::Base
     pdf.stroke
                           
     content_type 'application/pdf'
+    attachment('deed-poll.pdf') if(params[:output] == 'attachment')
     pdf.render
   end
 

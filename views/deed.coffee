@@ -26,3 +26,6 @@ $ ->
     if (event.which == 13)
       $('.btn-primary:visible:first').click()
       return false
+
+  $('#view-deed-poll-icon').css('cursor', 'pointer').click ->
+    $('#view-deed-poll').click()

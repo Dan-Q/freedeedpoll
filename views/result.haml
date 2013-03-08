@@ -1,0 +1,157 @@
+.hero-unit
+  %h1 Your Deed Poll is ready
+
+  %p
+    Click on a button below to view or download your Deed Poll as a PDF file.
+    Print it out and sign it.
+
+.row
+  .span2
+
+  .span2.text-center
+    %img#view-deed-poll-icon{:src => '/img/deed-poll-pdf.png', :alt => 'Deed Poll (PDF)'}
+    %hr
+
+    %form.with-new-window-option{:method => 'post', :action => '/deed-poll.pdf', :target => '_blank'}
+      %input.hidden{:type => 'hidden', :name => 'type', :value => params[:type]}
+      %input.hidden{:type => 'hidden', :name => 'hotlink_code', :value => @hotlink_code}
+      %input.hidden{:type => 'hidden', :name => 'new_name', :value => params[:new_name]}
+      %input.hidden{:type => 'hidden', :name => 'old_name', :value => params[:old_name]}
+      %input.hidden{:type => 'hidden', :name => 'changing_first_name', :value => params[:changing_first_name]}
+      %input.hidden{:type => 'hidden', :name => 'address', :value => params[:address]}
+      %input.hidden{:type => 'hidden', :name => 'town', :value => params[:town]}
+      %input.hidden{:type => 'hidden', :name => 'county', :value => params[:county]}
+      %input.hidden{:type => 'hidden', :name => 'witness1_name', :value => params[:witness1_name]}
+      %input.hidden{:type => 'hidden', :name => 'witness1_address', :value => params[:witness1_address]}
+      %input.hidden{:type => 'hidden', :name => 'witness1_town', :value => params[:witness1_town]}
+      %input.hidden{:type => 'hidden', :name => 'witness2_name', :value => params[:witness2_name]}
+      %input.hidden{:type => 'hidden', :name => 'witness2_address', :value => params[:witness2_address]}
+      %input.hidden{:type => 'hidden', :name => 'witness2_town', :value => params[:witness2_town]}
+      %input#view-deed-poll.submit.btn.btn-large.btn-primary{:type => 'submit', :value => 'View'}
+
+    %form.with-new-window-option{:method => 'post', :action => '/deed-poll.pdf'}
+      %input.hidden{:type => 'hidden', :name => 'type', :value => params[:type]}
+      %input.hidden{:type => 'hidden', :name => 'hotlink_code', :value => @hotlink_code}
+      %input.hidden{:type => 'hidden', :name => 'new_name', :value => params[:new_name]}
+      %input.hidden{:type => 'hidden', :name => 'old_name', :value => params[:old_name]}
+      %input.hidden{:type => 'hidden', :name => 'changing_first_name', :value => params[:changing_first_name]}
+      %input.hidden{:type => 'hidden', :name => 'address', :value => params[:address]}
+      %input.hidden{:type => 'hidden', :name => 'town', :value => params[:town]}
+      %input.hidden{:type => 'hidden', :name => 'county', :value => params[:county]}
+      %input.hidden{:type => 'hidden', :name => 'witness1_name', :value => params[:witness1_name]}
+      %input.hidden{:type => 'hidden', :name => 'witness1_address', :value => params[:witness1_address]}
+      %input.hidden{:type => 'hidden', :name => 'witness1_town', :value => params[:witness1_town]}
+      %input.hidden{:type => 'hidden', :name => 'witness2_name', :value => params[:witness2_name]}
+      %input.hidden{:type => 'hidden', :name => 'witness2_address', :value => params[:witness2_address]}
+      %input.hidden{:type => 'hidden', :name => 'witness2_town', :value => params[:witness2_town]}
+      %input.hidden{:type => 'hidden', :name => 'output', :value => 'attachment'}
+      %input.submit.btn{:type => 'submit', :value => 'Download'}
+
+  .span1
+
+  .span5
+    %h3 Printing tips
+    %ul
+      %li Print onto A4 paper.
+      %li Use a nice, heavy paper, such as parchment paper, to give it a professional finish.
+      %li
+        Make two or three original copies, by printing and signing it several times.
+        Some organisations will insist on seeing an original, nor a photocopy, so it's faster
+        to send off several originals at the same time.
+
+    %hr
+
+    %h3 So that's it?
+    %p
+      Yes!
+      %em As soon as you sign that document, you've changed your name.
+      Congratulations!
+    %p
+      You still need to tell all of the people you do business with that you've changed
+      your name. Scroll down for tips, and template letters.
+
+  .span2
+
+.row
+  .span12
+
+    %h3 What next?
+
+    %p
+      This checklist should help you to contact everybody you might need to tell about your new name:
+
+    %table.table.table-striped.table-bordered
+      %thead
+        %tr
+          %th People to tell
+          %th{:colspan => 2} How to tell them
+      %tbody
+        %tr
+          %th Friends and family
+          %td
+            Don't forget to tell your friends and family that you've changed your name!
+            %br
+            You might like to put a message out on your favourite social networks, too.
+          %td
+            %a{:href => "http://twitter.com/?status=Just changed my name to #{params[:new_name]} using freedeedpoll.org.uk", :target => '_blank'}
+              %img{:src => '/img/twitter.png', :alt => 'Tweet about your new name'}
+            %a{:href => "http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.freedeedpoll.org.uk%2F", :target => '_blank'}
+              %img{:src => '/img/facebook.png', :alt => 'Facebook about your new name'}
+            %a{:href => "https://plus.google.com/share?url=http%3A%2F%2Fwww.freedeedpoll.org.uk%2F", :target => '_blank'}
+              %img{:src => '/img/gplus.png', :alt => 'Google+ about your new name'}
+
+        %tr
+          %th Passport Office
+          %td
+            If you have a passport, you should update it early on, because this will provide you with
+            government-issued, photographic identificiation under your new name, which will make it
+            easier to prove your identity to other organisations.
+            %br
+            You will be charged for the new passport, but it will have an extension on it of
+            up to nine months (if you had time left on your old passport).
+          %td
+            %a{:href => 'https://www.gov.uk/renew-adult-passport'} How to renew your passport
+            %br
+            Be sure to check 'change to existing passport' if applying online, and use your
+            %em new
+            signature. You will need to post an original Deed Poll to the Passport Office.
+
+        %tr
+          %th DVLA
+          %td
+            If you have a driving license - including a provisional one - you should update it early
+            on, because this will provide you with government-issued, photographic identificiation
+            under your new name, which will make it easier to prove your identity to other organisations.
+            %br
+            So long as you have both parts of your license, there is no charge for this service.
+            Note that you do not need to send a new photo.
+          %td
+            Fill in a form D1 (D2 if you drive a bus or lorry). You can get this from the Post Office,
+            or
+            %a{:href => 'https://www.dvla.gov.uk/dvla/onlineservices/order_forms.aspx'} get one posted to you
+            by the DVLA.
+
+        %tr
+          %th Your bank
+          %td
+            Advising your bank of your new name early on is important, or else you will be unable to
+            accept cheques in your new name, and your photographic ID will not match the details that
+            your bank has on file for you (which could make proving your identity difficult if you
+            lose your bank card!).
+          %td
+            Visit your bank in person, or
+            %a{:href => '/docs/letter-to-bank.doc'} download a template letter
+            to send.
+
+        %tr
+          %th Inland Revenue
+          %td
+            If you are self-employed, you receive tax credits or benefits, or you are repaying a student
+            loan, then you must tell the Inland Revenue about your new name.
+            %br
+            If not, then you may let your employer tell them on your behalf.
+          %td
+            %a{:href => 'http://www.hmrc.gov.uk/report-changes/individual/name-address.htm'}
+              Report your change of name to HMRC
+            %br
+            
