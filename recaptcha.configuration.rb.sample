@@ -1,3 +1,0 @@
-# rename this file to recaptcha.configuration.rb
-RECAPTCHA_PUBLIC_KEY = 'put your recaptcha public key here'
-RECAPTCHA_PRIVATE_KEY = 'put your recaptcha private key here'

@@ -24,4 +24,5 @@ $ ->
 
   $('.hero-unit').on 'keypress', 'input', (event)->
     if (event.which == 13)
-      $('a.btn-primary:visible').click()
+      $('.btn-primary:visible:first').click()
+      return false

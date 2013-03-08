@@ -1,3 +1,6 @@
+%input.hidden{:type => 'hidden', :name => 'type', :value => 'own'}
+%input.hidden{:type => 'hidden', :name => 'hotlink_code', :value => @hotlink_code}
+
 .wizard-panel.current
   %h2
     What's your
@@ -21,10 +24,10 @@
     normally be allowed to use. However, we'd recommend that you do not.
 
   %p
-    %strong What will you do with this information?
+    %strong Can I make a Deed Poll for somebody else?
   %p
-    Your name will only be used to generate your Deed Poll. We will not keep your
-    personal information for any longer than is necessary to generate your document.
+    Yes! Deeds Poll make great gifts, but remember that it's up to the other person
+    to read and sign it - you can't do that bit for them.
 
 -####################################################################################################-
 
@@ -54,6 +57,13 @@
   %p
     For more information on choosing your name, see:
     %a{:href => '#'} choosing a name
+
+  %p
+    %strong What will you do with this information?
+  %p
+    Your name will only be used to generate your Deed Poll. We will not keep your
+    personal information for any longer than is necessary to generate your document.
+
 
 -####################################################################################################-
 
@@ -136,7 +146,8 @@
     %strong Who can be a witness?
   %p
     Your witness should be somebody who knows you personally, but is not closely related to you. A friend
-    or co-worker is fine. Your spouse, sibling, parents or children are not.
+    or co-worker is fine. Your spouse, sibling, parents or children are not. Your witness must be at least
+    18 years old.
 
 -####################################################################################################-
 
@@ -160,7 +171,7 @@
 
   %p.clearfix
     %a.btn.btn-large.btn-prev.pull-left{:href => '#'} &laquo; Back
-    %a.btn.btn-large.btn-primary.btn-next.pull-right{:href => '#'} Generate;
+    %input.btn.btn-large.btn-primary.btn-generate.pull-right{:type => 'submit', :value => 'Generate'}
 
   %p
     %strong Do I have to have two witnesses?
