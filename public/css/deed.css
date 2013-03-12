@@ -52,7 +52,9 @@ body {
 .wizard-panel .input-append input,
 .wizard-panel .input-append a,
 .wizard-panel .input-prepend input,
-.wizard-panel .input-prepend a {
+.wizard-panel .input-prepend a,
+.wizard-panel .input-append select,
+.wizard-panel .input-prepend select {
   height: 31.5px;
   line-height: 31.5px;
   font-size: 28px;
@@ -74,7 +76,9 @@ body {
   .wizard-panel .input-append input,
   .wizard-panel .input-append a,
   .wizard-panel .input-prepend input,
-  .wizard-panel .input-prepend a {
+  .wizard-panel .input-prepend a,
+  .wizard-panel .input-append select,
+  .wizard-panel .input-prepend select {
     height: 18px;
     line-height: 18px;
     font-size: 16px;

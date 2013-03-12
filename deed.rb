@@ -91,6 +91,7 @@ class Deed < Sinatra::Base
 
   get '/child' do
     redirect to('/') and return unless request.xhr?
+    @month_names = MONTH_NAMES
     haml :child, :layout => false
   end
 
