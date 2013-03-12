@@ -22,11 +22,24 @@ class Fixnum
   end
 end
 
-if(File::exists?('./config/hotlink-prevention.rb'))
-  require './config/hotlink-prevention.rb'
-else
-  HOTLINK_PREVENTION_SECRET_KEY = 'this should be set in config/hotlink-prevention.rb'
+raise "Copy config/encryptor.sample.rb to config/encryptor.rb and edit the secret key inside it." unless File::exists?('./config/encryptor.rb')
+require './config/encryptor.rb'
+raise "Copy config/hotlink-prevention.sample.rb to config/hotlink-prevention.rb and edit the secret key inside it." unless File::exists?('./config/hotlink-prevention.rb')
+require './config/hotlink-prevention.rb'
+
+module Encryption
+  require 'yaml'
+  require 'base64'
+
+  def Encryption.encrypt(plaintext)
+    Base64::encode64(Encryptor::encrypt(plaintext.to_yaml, :key => ENCRYPTION_KEY)).gsub(/[ \n]/m, '').gsub('+','.')
+  end
+
+  def Encryption.decrypt(ciphertext)
+    YAML::load(Encryptor::decrypt(Base64::decode64(ciphertext.gsub('.', '+')), :key => ENCRYPTION_KEY))
+  end
 end
+
 module HotlinkPrevention
   require 'date'
   require 'digest/md5'
@@ -83,6 +96,20 @@ class Deed < Sinatra::Base
 
   post '/' do
     redirect to('/') and return unless HotlinkPrevention.valid?(params[:hotlink_code])
+    ciphertext = Encryption.encrypt(params.reject{|k,v|k == 'hotlink_code'})
+    if ciphertext.length > 1950
+      # very long URL - render in place
+      @bookmarkable, @decoded_params = false, params
+      haml :result
+    else
+      # otherwise - redirect to bookmarkable URL
+      redirect to("/d/#{Encryption.encrypt(params.reject{|k,v|k == 'hotlink_code'})}")
+    end
+  end
+
+  get '/d/*' do
+    ciphertext = params[:splat].first
+    @bookmarkable, @decoded_params = true, Encryption.decrypt(ciphertext)
     haml :result
   end
 
@@ -105,8 +132,7 @@ class Deed < Sinatra::Base
     pdf.font_size(11)
 
     clause = '1(1)'
-    witnesses = 2
-    #clause = (params[:special] == '37(1)-1' ? '37(1)' : params[:special][0,5]).strip
+    witnesses = (params[:w1_n].strip == '') ? 1 : 2
     #witnesses = (params[:special] == '37(1)-1' ? 1 : 2)
     #if params[:date] !~ /^(\d{4})-(\d{2})-(\d{2})$/
       Time::new.strftime('%Y-%m-%d').strip =~ /^(\d{4})-(\d{2})-(\d{2})$/
@@ -116,28 +142,28 @@ class Deed < Sinatra::Base
     pdf.formatted_text_box([ 
                            { :text => "\n\n\n\nBY THIS DEED OF CHANGE OF NAME", :font => 'Bold' },
                            { :text => ' made by myself the undersigned ' },
-                           { :text => params[:new_name].strip, :font => 'Bold' },
-                           { :text => " of #{params[:address].strip}, #{params[:town].strip} in the County of #{params[:county]} formerly known as " },
-                           { :text => params[:old_name].strip, :font => 'Bold' },
+                           { :text => params[:nn].strip, :font => 'Bold' },
+                           { :text => " of #{params[:a].strip}, #{params[:t].strip} in the County of #{params[:c]} formerly known as " },
+                           { :text => params[:on].strip, :font => 'Bold' },
                            { :text => ", a British Citizen under section #{clause} of the British Nationality Act 1981" },
                            { :text => "\n\nHEREBY DECLARE AS FOLLOWS:", :font => 'Bold' },
                            { :text => "\n\nI.    I ABSOLUTELY", :font => 'Bold' },
-                           { :text => " and entirely renounce, relinquish and abandon the use of my said former name #{params[:old_name].strip} and assume, adopt and determine to take and use from the date hereof the name of #{params[:new_name].strip} in substitution for my former name of #{params[:old_name].strip}" },
+                           { :text => " and entirely renounce, relinquish and abandon the use of my said former name #{params[:on].strip} and assume, adopt and determine to take and use from the date hereof the name of #{params[:nn].strip} in substitution for my former name of #{params[:on].strip}" },
                            { :text => "\n\nII.   I SHALL AT ALL TIMES", :font => 'Bold' },
-                           { :text => " hereafter in all records, deeds documents and other writings and in all actions and proceedings as well as in all dealings and transactions and on all occasions whatsoever use and subscribe the said name of #{params[:new_name].strip} as my name, in substitution for my former name of #{params[:old_name].strip} so relinquished as aforesaid to the intent that I may hereafter be called known or distinguished not by the former name of #{params[:old_name].strip} but by the name #{params[:new_name].strip}" },
+                           { :text => " hereafter in all records, deeds documents and other writings and in all actions and proceedings as well as in all dealings and transactions and on all occasions whatsoever use and subscribe the said name of #{params[:nn].strip} as my name, in substitution for my former name of #{params[:on].strip} so relinquished as aforesaid to the intent that I may hereafter be called known or distinguished not by the former name of #{params[:on].strip} but by the name #{params[:nn].strip}" },
                            { :text => "\n\nIII.  I AUTHORISE AND REQUIRE", :font => 'Bold' },
-                           { :text => " all persons at all times to designate, describe, and address me by the adopted name of #{params[:new_name].strip}" },
+                           { :text => " all persons at all times to designate, describe, and address me by the adopted name of #{params[:nn].strip}" },
                            { :text => "\n\nIN WITNESS", :font => 'Bold' },
-                           { :text => " whereof I have hereunto subscribed my adopted and substituted name of #{params[:new_name].strip} and also my said former name of #{params[:old_name].strip}." },
-                           { :text => (params[:first_name_changed] == '1' ? "\n\nNotwithstanding the decision of Mr Justice Vaisey in re Parrott, Cox v Parrott, the applicant wishes the enrolment to proceed." : '')},
+                           { :text => " whereof I have hereunto subscribed my adopted and substituted name of #{params[:nn].strip} and also my said former name of #{params[:on].strip}." },
+                           { :text => (params[:fnc] == '1' ? "\n\nNotwithstanding the decision of Mr Justice Vaisey in re Parrott, Cox v Parrott, the applicant wishes the enrolment to proceed." : '')},
                            { :text => "\n\nSIGNED AS A DEED THIS #{day.ordinalize.upcase} DAY OF #{month.upcase} IN THE YEAR #{year}", :font => 'Bold' },
                           ], {})
 
-    wit1str = "#{params[:witness1_name].strip}\n#{params[:witness1_address].strip}, #{params[:witness1_town].strip}"
-    wit2str = (witnesses == 2 ? "#{params[:witness2_name].strip}\n#{params[:witness2_address].strip}, #{params[:witness2_town].strip}" : '')
+    wit1str = "#{params[:w1_n].strip}\n#{params[:w1_a].strip}, #{params[:w1_t].strip}"
+    wit2str = (witnesses == 2 ? "#{params[:w2_n].strip}\n#{params[:w2_a].strip}, #{params[:w2_t].strip}" : '')
     pdf.make_table([
       ["\n" * 35,''],
-      ["by the above name\n#{params[:new_name].strip}", "by the above name\n#{params[:old_name].strip}"],
+      ["by the above name\n#{params[:nn].strip}", "by the above name\n#{params[:on].strip}"],
       ["\n" * 5,''],
       [wit1str, wit2str],
     ], { :width => 460, :cell_style => { :align => :center, :borders => [] } }).draw

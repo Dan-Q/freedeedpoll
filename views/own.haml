@@ -9,7 +9,7 @@
   
   %p
     .control-group.input-append
-      %input#old_name.text.required{:type => 'text', :name => 'old_name', :placeholder => 'Your old name'}
+      %input#on.text.required{:type => 'text', :name => 'on', :placeholder => 'Your old name'}
       %a.btn.btn-primary.btn-next{:href => '#'} Next &raquo;
 
   %p
@@ -40,7 +40,7 @@
   %p
     .control-group.input-prepend.input-append
       %a.btn.btn-prev{:href => '#'} &laquo; Back
-      %input#new_name.text.required{:type => 'text', :name => 'new_name', :placeholder => 'Your new name'}
+      %input#nn.text.required{:type => 'text', :name => 'nn', :placeholder => 'Your new name'}
       %a.btn.btn-primary.btn-next{:href => '#'} Next &raquo;
 
   %p
@@ -72,8 +72,8 @@
     Are you changing your first name?
 
   %p
-    %input.hidden{:type => 'hidden', :name => 'changing_first_name', :value => '0'}
-    %input#changing_first_name.checkbox{:type => 'checkbox', :name => 'changing_first_name', :value => '1'}
+    %input.hidden{:type => 'hidden', :name => 'cfn', :value => '0'}
+    %input#cfn.checkbox{:type => 'checkbox', :name => 'cfn', :value => '1'}
     %strong Yes
     (check this box if you're changing your first name)
 
@@ -96,17 +96,17 @@
 
   .form-horizontal
     .control-group
-      %label.control-label{:for => 'address'} Street address:
+      %label.control-label{:for => 'a'} Street address:
       .controls
-        %input#address.text.required{:type => 'text', :name => 'address', :placeholder => 'Your street address'}
+        %input#a.text.required{:type => 'text', :name => 'a', :placeholder => 'Your street address'}
     .control-group
-      %label.control-label{:for => 'town'} Town:
+      %label.control-label{:for => 't'} Town:
       .controls
-        %input#town.text.required{:type => 'text', :name => 'town', :placeholder => 'Your town'}
+        %input#t.text.required{:type => 'text', :name => 't', :placeholder => 'Your town'}
     .control-group
-      %label.control-label{:for => 'county'} County:
+      %label.control-label{:for => 'c'} County:
       .controls
-        %input#county.text.required{:type => 'text', :name => 'county', :placeholder => 'Your county'}
+        %input#c.text.required{:type => 'text', :name => 'c', :placeholder => 'Your county'}
 
   %p.clearfix
     %a.btn.btn-large.btn-prev.pull-left{:href => '#'} &laquo; Back
@@ -126,17 +126,17 @@
 
   .form-horizontal
     .control-group
-      %label.control-label{:for => 'witness1_name'} Name:
+      %label.control-label{:for => 'w1_n'} Name:
       .controls
-        %input#witness1_name.text.required{:type => 'text', :name => 'witness1_name', :placeholder => 'The name of the first witness'}
+        %input#w1_n.text.required{:type => 'text', :name => 'w1_n', :placeholder => 'The name of the first witness'}
     .control-group
-      %label.control-label{:for => 'witness1_address'} Street address:
+      %label.control-label{:for => 'w1_a'} Street address:
       .controls
-        %input#witness1_address.text.required{:type => 'text', :name => 'witness1_address', :placeholder => 'Street address of the first witness'}
+        %input#w1_a.text.required{:type => 'text', :name => 'w1_a', :placeholder => 'Street address of the first witness'}
     .control-group
-      %label.control-label{:for => 'witness1_town'} Town:
+      %label.control-label{:for => 'w1_t'} Town:
       .controls
-        %input#witness1_town.text.required{:type => 'text', :name => 'witness1_town', :placeholder => 'Town of the first witness'}
+        %input#w1_t.text.required{:type => 'text', :name => 'w1_t', :placeholder => 'Town of the first witness'}
 
   %p.clearfix
     %a.btn.btn-large.btn-prev.pull-left{:href => '#'} &laquo; Back
@@ -157,17 +157,17 @@
 
   .form-horizontal
     .control-group
-      %label.control-label{:for => 'witness2_name'} Name:
+      %label.control-label{:for => 'w2_n'} Name:
       .controls
-        %input#witness2_name.text{:type => 'text', :name => 'witness2_name', :placeholder => 'The name of the second witness'}
+        %input#w2_n.text{:type => 'text', :name => 'w2_n', :placeholder => 'The name of the second witness'}
     .control-group
-      %label.control-label{:for => 'witness2_address'} Street address:
+      %label.control-label{:for => 'w2_a'} Street address:
       .controls
-        %input#witness2_address.text{:type => 'text', :name => 'witness2_address', :placeholder => 'Street address of the second witness'}
+        %input#w2_a.text{:type => 'text', :name => 'w2_a', :placeholder => 'Street address of the second witness'}
     .control-group
-      %label.control-label{:for => 'witness2_town'} Town:
+      %label.control-label{:for => 'w2_t'} Town:
       .controls
-        %input#witness2_town.text{:type => 'text', :name => 'witness2_town', :placeholder => 'Town of the second witness'}
+        %input#w2_t.text{:type => 'text', :name => 'w2_t', :placeholder => 'Town of the second witness'}
 
   %p.clearfix
     %a.btn.btn-large.btn-prev.pull-left{:href => '#'} &laquo; Back

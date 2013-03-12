@@ -13,37 +13,15 @@
     %hr
 
     %form.with-new-window-option{:method => 'post', :action => '/deed-poll.pdf', :target => '_blank'}
-      %input.hidden{:type => 'hidden', :name => 'type', :value => params[:type]}
+      - @decoded_params.reject{|k,v| k == 'hotlink_code'}.each do |k,v|
+        %input.hidden{:type => 'hidden', :name => k, :value => v}
       %input.hidden{:type => 'hidden', :name => 'hotlink_code', :value => @hotlink_code}
-      %input.hidden{:type => 'hidden', :name => 'new_name', :value => params[:new_name]}
-      %input.hidden{:type => 'hidden', :name => 'old_name', :value => params[:old_name]}
-      %input.hidden{:type => 'hidden', :name => 'changing_first_name', :value => params[:changing_first_name]}
-      %input.hidden{:type => 'hidden', :name => 'address', :value => params[:address]}
-      %input.hidden{:type => 'hidden', :name => 'town', :value => params[:town]}
-      %input.hidden{:type => 'hidden', :name => 'county', :value => params[:county]}
-      %input.hidden{:type => 'hidden', :name => 'witness1_name', :value => params[:witness1_name]}
-      %input.hidden{:type => 'hidden', :name => 'witness1_address', :value => params[:witness1_address]}
-      %input.hidden{:type => 'hidden', :name => 'witness1_town', :value => params[:witness1_town]}
-      %input.hidden{:type => 'hidden', :name => 'witness2_name', :value => params[:witness2_name]}
-      %input.hidden{:type => 'hidden', :name => 'witness2_address', :value => params[:witness2_address]}
-      %input.hidden{:type => 'hidden', :name => 'witness2_town', :value => params[:witness2_town]}
       %input#view-deed-poll.submit.btn.btn-large.btn-primary{:type => 'submit', :value => 'View'}
 
     %form.with-new-window-option{:method => 'post', :action => '/deed-poll.pdf'}
-      %input.hidden{:type => 'hidden', :name => 'type', :value => params[:type]}
+      - @decoded_params.reject{|k,v| k == 'hotlink_code'}.each do |k,v|
+        %input.hidden{:type => 'hidden', :name => k, :value => v}
       %input.hidden{:type => 'hidden', :name => 'hotlink_code', :value => @hotlink_code}
-      %input.hidden{:type => 'hidden', :name => 'new_name', :value => params[:new_name]}
-      %input.hidden{:type => 'hidden', :name => 'old_name', :value => params[:old_name]}
-      %input.hidden{:type => 'hidden', :name => 'changing_first_name', :value => params[:changing_first_name]}
-      %input.hidden{:type => 'hidden', :name => 'address', :value => params[:address]}
-      %input.hidden{:type => 'hidden', :name => 'town', :value => params[:town]}
-      %input.hidden{:type => 'hidden', :name => 'county', :value => params[:county]}
-      %input.hidden{:type => 'hidden', :name => 'witness1_name', :value => params[:witness1_name]}
-      %input.hidden{:type => 'hidden', :name => 'witness1_address', :value => params[:witness1_address]}
-      %input.hidden{:type => 'hidden', :name => 'witness1_town', :value => params[:witness1_town]}
-      %input.hidden{:type => 'hidden', :name => 'witness2_name', :value => params[:witness2_name]}
-      %input.hidden{:type => 'hidden', :name => 'witness2_address', :value => params[:witness2_address]}
-      %input.hidden{:type => 'hidden', :name => 'witness2_town', :value => params[:witness2_town]}
       %input.hidden{:type => 'hidden', :name => 'output', :value => 'attachment'}
       %input.submit.btn{:type => 'submit', :value => 'Download'}
 
@@ -56,7 +34,7 @@
       %li Use a nice, heavy paper, such as parchment paper, to give it a professional finish.
       %li
         Make two or three original copies, by printing and signing it several times.
-        Some organisations will insist on seeing an original, nor a photocopy, so it's faster
+        Some organisations will insist on seeing an original, not a photocopy, so it's faster
         to send off several originals at the same time.
 
     %hr
@@ -71,6 +49,16 @@
       your name. Scroll down for tips, and template letters.
 
   .span2
+
+- if @bookmarkable
+  .row
+    .span2
+    .span8
+      .alert.alert-success
+        %i.icon-star
+        You can bookmark this page and come back to it at any time.
+        %a{:href => '#'} How does this work?
+    .span2
 
 .row
   .span12
@@ -93,7 +81,7 @@
             %br
             You might like to put a message out on your favourite social networks, too.
           %td
-            %a{:href => "http://twitter.com/?status=Just changed my name to #{params[:new_name]} using freedeedpoll.org.uk", :target => '_blank'}
+            %a{:href => "http://twitter.com/?status=Just changed my name to #{@decoded_params[:nn]} using freedeedpoll.org.uk", :target => '_blank'}
               %img{:src => '/img/twitter.png', :alt => 'Tweet about your new name'}
             %a{:href => "http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.freedeedpoll.org.uk%2F", :target => '_blank'}
               %img{:src => '/img/facebook.png', :alt => 'Facebook about your new name'}
@@ -316,5 +304,38 @@
           %td
             Either visit their websites or send them a letter -
             %a{:href => '/docs/letter-general.doc'} here's a template
-            - or visit in person.
+            \- or visit in person.
+
+.row
+  .span12
+    %h3 Tell us about your experience!
+    %p
+      We'd love to hear about your experience of using this service. Please
+      %a{:href => 'http://www.surveymonkey.com/s/7TX7SBS'} fill in our feedback survey
+      to let us know what you thought.
+
+    %p.clearfix
+      %a.btn.btn-large.pull-right{:href => 'http://www.surveymonkey.com/s/7TX7SBS', :target => '_blank'} Give us feedback &raquo;
+
+.row
+  .span12
+    %h3 Did this site help you?
+    %p
+      There are lots of sites on the Internet that will try to sell you Deed
+      Poll services, typically for between &pound;10 and &pound;40 each. We
+      hope that this site helped you to change your name without the expense.
+    %p
+      If it did, please consider making a donation to one of the following
+      charities:
+
+#charities.row
+  .span4.text-center
+    %a{:href => 'http://www.samaritans.org/support-us/donate-online'}
+      %img{:alt => 'Samaritans', :src => '/img/charities/samaritans.png'}
+  .span4.text-center
+    %a{:href => 'http://www.greatnorthairambulance.co.uk/online/'}
+      %img{:alt => 'Great North Air Ambulance', :src => '/img/charities/great-north-air-ambulance.png'}
+  .span4.text-center
+    %a{:href => 'http://www.mermaidsuk.org.uk/index.php/donate'}
+      %img{:alt => 'Mermaids', :src => '/img/charities/mermaids.jpg'}
 
