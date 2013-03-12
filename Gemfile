@@ -7,3 +7,4 @@ gem 'sinatra-reloader', "~> 1.0"
 gem 'jpoz-sinatra-recaptcha'
 gem 'prawn'
 gem 'coffee-script', "~> 2.2"
+gem 'encryptor', '~> 1.1'
