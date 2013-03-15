@@ -11,9 +11,9 @@
     %title Free Deed Poll - legally change your name for free, without a solicitor
     %meta{:content => "", :name => "description"}/
     %meta{:content => "width=device-width", :name => "viewport"}/
-    %link{:href => "/css/bootstrap.min.css", :rel => "stylesheet"}/
-    %link{:href => "/css/bootstrap-responsive.min.css", :rel => "stylesheet"}/
-    %link{:href => "/css/deed.css", :rel => "stylesheet"}/
+    %link{:href => "/css/bootstrap.min.css", :rel => "stylesheet", :media => 'all'}/
+    %link{:href => "/css/bootstrap-responsive.min.css", :rel => "stylesheet", :media => 'screen'}/
+    %link{:href => "/css/deed.css", :rel => "stylesheet", :media => 'all'}/
     %script{:src => "/js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"}
   %body
     /[if lt IE 7]
@@ -34,6 +34,9 @@
           &copy;
           %a{:href => "http://www.scatmania.org/"} Dan Q
           2013
+          |
+          This site is
+          %a{:href => 'https://github.com/avapoet/freedeedpoll'} completely open-source
 
   %script{:src => "//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"}
   :javascript

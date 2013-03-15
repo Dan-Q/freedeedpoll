@@ -60,6 +60,22 @@ body {
   font-size: 28px;
 }
 
+.wizard-panel .input-append select,
+.wizard-panel .input-prepend select {
+  border: 0;
+  height: 41px;
+  background: transparent;
+  outline: none;
+  color: #08c;
+}
+
+.wizard-panel .input-append select:hover,
+.wizard-panel .input-prepend select:hover,
+.wizard-panel .input-append select:focus,
+.wizard-panel .input-prepend select:focus {
+  #005580
+}
+
 @media (min-width: 979px) {
   .wizard-panel input.text {
     width: 580px;

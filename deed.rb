@@ -110,11 +110,22 @@ class Deed < Sinatra::Base
 
   get '/d/*' do
     ciphertext = params[:splat].first
-    @bookmarkable, @decoded_params = true, Encryption.decrypt(ciphertext)
-    haml :result
+    begin
+      @bookmarkable, @decoded_params = true, Encryption.decrypt(ciphertext)
+      haml :result
+    rescue OpenSSL::Cipher::CipherError => e
+      # tampered URL
+      redirect to('/') and return
+    end
   end
 
   post '/deed-poll.pdf' do
+    return deed_poll_own(params) if params[:type] == 'own'
+    return deed_poll_child(params) if params[:type] == 'child'
+    haml :result
+  end
+
+  def deed_poll_own(params)
     pdf = Prawn::Document.new(:page_size => 'A4',
                               :top_margin => 3.cm,
                               :bottom_margin => 3.cm,
@@ -127,13 +138,13 @@ class Deed < Sinatra::Base
     )
     
     pdf.font('Title')
-    pdf.text_box('Deed of Change of Name', :size => 24, :align => :center)
+    pdf.text_box('Deed of Change of Name (Deed Poll)', :size => 24, :align => :center)
     
     pdf.font('Text')
     pdf.font_size(11)
 
     clause = '1(1)'
-    witnesses = (params[:w1_n].strip == '') ? 1 : 2
+    witnesses = (params[:w2_n].strip == '') ? 1 : 2
     #witnesses = (params[:special] == '37(1)-1' ? 1 : 2)
     #if params[:date] !~ /^(\d{4})-(\d{2})-(\d{2})$/
       Time::new.strftime('%Y-%m-%d').strip =~ /^(\d{4})-(\d{2})-(\d{2})$/
@@ -156,29 +167,135 @@ class Deed < Sinatra::Base
                            { :text => " all persons at all times to designate, describe, and address me by the adopted name of #{params[:nn].strip}" },
                            { :text => "\n\nIN WITNESS", :font => 'Bold' },
                            { :text => " whereof I have hereunto subscribed my adopted and substituted name of #{params[:nn].strip} and also my said former name of #{params[:on].strip}." },
-                           { :text => (params[:fnc] == '1' ? "\n\nNotwithstanding the decision of Mr Justice Vaisey in re Parrott, Cox v Parrott, the applicant wishes the enrolment to proceed." : '')},
+                           { :text => (params[:cfn] == '1' ? "\n\nNotwithstanding the decision of Mr Justice Vaisey in re Parrott, Cox v Parrott, the applicant wishes the enrolment to proceed." : '')},
                            { :text => "\n\nSIGNED AS A DEED THIS #{day.ordinalize.upcase} DAY OF #{month.upcase} IN THE YEAR #{year}", :font => 'Bold' },
                           ], {})
 
     wit1str = "#{params[:w1_n].strip}\n#{params[:w1_a].strip}, #{params[:w1_t].strip}"
     wit2str = (witnesses == 2 ? "#{params[:w2_n].strip}\n#{params[:w2_a].strip}, #{params[:w2_t].strip}" : '')
     pdf.make_table([
-      ["\n" * 35,''],
-      ["by the above name\n#{params[:nn].strip}", "by the above name\n#{params[:on].strip}"],
-      ["\n" * 5,''],
-      [wit1str, wit2str],
-    ], { :width => 460, :cell_style => { :align => :center, :borders => [] } }).draw
+      [Prawn::Table::Cell.make(pdf, "by the above named\n#{params[:nn].strip}", :align => :center, :height => 480),
+       Prawn::Table::Cell.make(pdf, "by the above named\n#{params[:on].strip}", :align => :center, :height => 480)],
+      [Prawn::Table::Cell.make(pdf, 'Witnessed by:', :height => 70)],
+      [Prawn::Table::Cell.make(pdf, wit1str, :align => :center, :height => 100),
+       Prawn::Table::Cell.make(pdf, wit2str, :align => :center, :height => 100)],
+    ], { :width => 460, :cell_style => { :valign => :bottom, :borders => [] } }).draw
     
+    # Title underline
     pdf.line_width = 1
-    pdf.line(127, 650, 332, 650)
+    pdf.line(85, 650, 373, 650)
     pdf.stroke
+
+    # Signature lines
     pdf.line_width = 0.5
-    pdf.line(33, 222, 193, 222)
-    pdf.line(260, 222, 420, 222)
-    pdf.line(33, 113, 193, 113)
-    pdf.line(260, 113, 420, 113) if witnesses == 2
+    pdf.line(33, 222, 215, 222)                    # new name
+    pdf.line(260, 222, 442, 222)                   # old name
+    pdf.line(33, 52, 215, 52)                      # witness 1
+    pdf.line(260, 52, 442, 52) if witnesses == 2 # witness 2
     pdf.stroke
                           
+    content_type 'application/pdf'
+    attachment('deed-poll.pdf') if(params[:output] == 'attachment')
+    pdf.render
+  end
+
+  def deed_poll_child(params)
+    pdf = Prawn::Document.new(:page_size => 'A4',
+                              :top_margin => 3.cm,
+                              :bottom_margin => 3.cm,
+                              :left_margin => 2.4.cm,
+                              :right_margin => 2.4.cm)
+    pdf.font_families.update(
+                             'Title' => { :normal => 'lib/fonts/OldeEnglish.ttf' },
+                             'Text' => { :normal => 'lib/fonts/LinLibertine_R.ttf' },
+                             'Bold' => { :normal => 'lib/fonts/LinLibertine_RB.ttf' }
+    )
+
+    pdf.font('Title')
+    pdf.text_box('Deed of Change of Name (Deed Poll) for a Minor', :size => 24, :align => :center)
+
+    pdf.font('Text')
+    pdf.font_size(11)
+
+    clause = '1(1)'
+    witnesses = (params[:w2_n].strip == '') ? 1 : 2
+    #witnesses = (params[:special] == '37(1)-1' ? 1 : 2)
+    #if params[:date] !~ /^(\d{4})-(\d{2})-(\d{2})$/
+    Time::new.strftime('%Y-%m-%d').strip =~ /^(\d{4})-(\d{2})-(\d{2})$/
+    #end
+    year, month, day = $1.to_i, MONTH_NAMES[$2.to_i - 1], $3.to_i
+
+    parent2 = []
+    if params[:pn2].strip != ''
+      parent2 = [
+                 { :text => ', and ' },
+                 { :text => params[:pn2].strip, :font => 'Bold' },
+                 { :text => " of #{params[:a2].strip}, #{params[:t2].strip}, #{params[:c2]}" }
+                ]
+    end
+    my_our = parent2.empty? ? 'my' : 'our'
+    i_we = parent2.empty? ? 'I' : 'we'
+    pdf.formatted_text_box([
+                            { :text => "\n\n\n\nBY THIS DEED OF CHANGE OF NAME", :font => 'Bold' },
+                            { :text => " made by #{parent2.empty? ? 'myself' : 'we'} the undersigned " },
+                            { :text => params[:pn].strip, :font => 'Bold' },
+                            { :text => " of #{params[:a].strip}, #{params[:t].strip}, #{params[:c]}" }
+                           ] + parent2 + [
+                            { :text => "\n\nHEREBY DECLARE AS FOLLOWS:", :font => 'Bold' },
+                            { :text => "\n\nI.    ON BEHALF", :font => 'Bold' },
+                            { :text => " of #{my_our} child " },
+                            { :text => params[:nn].strip, :font => 'Bold' },
+                            { :text => ", who was born on the #{params[:dobd].to_i.ordinalize} day of #{MONTH_NAMES[params[:dobm].to_i - 1]} in the year #{params[:doby]}, I absolutely renounce, relinquish and abandon the use of #{my_our} child's former name of " },
+                            { :text => params[:on].strip, :font => 'Bold' },
+                            { :text => ' and in place thereof will assume, adopt and determine to take and use from the date hereof the name of ' },
+                            { :text => params[:nn].strip, :font => 'Bold' },
+                            { :text => " in substitution for #{my_our} child's former name of " },
+                            { :text => params[:on].strip, :font => 'Bold' },
+                            { :text => "\n\nII.   AT ALL TIMES", :font => 'Bold' },
+                            { :text => " #{my_our} child shall hereafter in all records, deeds, documents and other writings and in all actions and proceedings, as well as in all dealings and transactions and on all occasions whatsoever use and subscribe the said name of " },
+                            { :text => params[:nn].strip, :font => 'Bold' },
+                            { :text => " as #{my_our} child's name in substitution for #{my_our} child's former name of " },
+                            { :text => params[:on].strip, :font => 'Bold' },
+                            { :text => " so relinquished as aforesaid to the intent that they may hereafter be called, known or distinguised by the name of " },
+                            { :text => params[:nn].strip, :font => 'Bold' },
+                            { :text => " only and not by #{my_our} child's former name of " },
+                            { :text => params[:on].strip, :font => 'Bold' },
+                            { :text => "\n\nIII.  #{i_we.upcase} AUTHORISE AND REQUIRE", :font => 'Bold' },
+                            { :text => " all persons at all times to designate, describe, and address #{my_our} child  by the adopted and substituted name of " },
+                            { :text => params[:nn].strip, :font => 'Bold' },
+                            { :text => "\n\nIN WITNESS", :font => 'Bold' },
+                            { :text => " whereof #{i_we} have hereunto subscribed #{my_our} #{parent2.empty? ? 'name' : 'names'} for and on behalf of #{my_our} child " },
+                            { :text => params[:nn].strip, :font => 'Bold' },
+                            { :text => " formerly known as " },
+                            { :text => params[:on].strip, :font => 'Bold' },
+                            { :text => '.' },
+                            { :text => (params[:cfn] == '1' ? "\n\nNotwithstanding the decision of Mr Justice Vaisey in re Parrott, Cox v Parrott, the applicant wishes the enrolment to proceed." : '')},
+                            { :text => "\n\nSIGNED AS A DEED THIS #{day.ordinalize.upcase} DAY OF #{month.upcase} IN THE YEAR #{year}", :font => 'Bold' },
+                           ], {})
+
+    wit1str = "#{params[:w1_n].strip}\n#{params[:w1_a].strip}, #{params[:w1_t].strip}"
+    wit2str = (witnesses == 2 ? "#{params[:w2_n].strip}\n#{params[:w2_a].strip}, #{params[:w2_t].strip}" : '')
+    pdf.make_table([
+                    [Prawn::Table::Cell.make(pdf, "by the above named\n#{params[:pn].strip}", :align => :center, :height => 520),
+                     Prawn::Table::Cell.make(pdf, (parent2.empty? ? '' : "by the above named\n#{params[:pn2].strip}"), :align => :center, :height => 520)],
+      [Prawn::Table::Cell.make(pdf, 'Witnessed by:', :height => 40)],
+      [Prawn::Table::Cell.make(pdf, wit1str, :align => :center, :height => 100),
+       Prawn::Table::Cell.make(pdf, wit2str, :align => :center, :height => 100)],
+                   ], { :width => 460, :cell_style => { :valign => :bottom, :borders => [] } }).draw
+
+    # Title underline
+    pdf.line_width = 1
+    pdf.line(32, 650, 430, 650)
+    pdf.stroke
+
+    # Signature lines
+    pdf.line_width = 0.5
+    pdf.line(33, 182, 215, 182)                        # parent 1
+    pdf.line(260, 182, 442, 182) unless parent2.empty? # parent 2
+    pdf.line(33, 40, 215, 40)                          # witness 1
+    pdf.line(260, 40, 442, 40) if witnesses == 2       # witness 2
+    pdf.stroke
+
     content_type 'application/pdf'
     attachment('deed-poll.pdf') if(params[:output] == 'attachment')
     pdf.render

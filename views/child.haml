@@ -190,8 +190,8 @@
   %p
     .control-group.input-prepend.input-append
       %a.btn.btn-prev{:href => '#'} &laquo; Back
-      %input#pn.text{:type => 'text', :name => 'pn', :placeholder => "Your name"}
-      %a.btn.btn-primary.btn-next{:href => '#'} Next &raquo;
+      %input#pn.text{:type => 'text', :name => 'pn2', :placeholder => "Your name"}
+      %a.btn.btn-primary.btn-next.btn-skip-one-if-blank{:href => '#'} Next &raquo;
 
   %p
     If you are the sole parent, leave this blank.
@@ -211,6 +211,10 @@
     biological parentage. For children born in most of the UK, a man who
     marries a woman who already has non-adult children becomes a legal
     parent to those children.
+  %p
+    Note that just having
+    %em sole custody
+    is not the same thing as being the only parent!
 
   %p
     %strong If the other parent is changing their name, too:
@@ -219,6 +223,39 @@
     then they should change their own name
     %em first
     and you should then use their new name here.
+
+-####################################################################################################-
+
+.wizard-panel
+  %h2
+    Where does the other parent live?
+
+  .form-horizontal
+    .control-group
+      %label.control-label{:for => 'a'} Street address:
+      .controls
+        %input#a.text{:type => 'text', :name => 'a2', :placeholder => 'Your street address'}
+    .control-group
+      %label.control-label{:for => 't'} Town:
+      .controls
+        %input#t.text{:type => 'text', :name => 't2', :placeholder => 'Your town'}
+    .control-group
+      %label.control-label{:for => 'c'} County:
+      .controls
+        %input#c.text{:type => 'text', :name => 'c2', :placeholder => 'Your county'}
+
+  %p.clearfix
+    %a.btn.btn-large.btn-prev.pull-left{:href => '#'} &laquo; Back
+    %a.btn.btn-large.btn-primary.btn-next.pull-right{:href => '#'} Next &raquo;
+
+  %p
+    If you are the sole parent, leave this blank.
+
+  %p
+    %strong What will you do with this information?
+  %p
+    The other parent's details will only be used to generate your Deed Poll. We will not keep your
+    personal information for any longer than is necessary to generate your document.
 
 -####################################################################################################-
 
@@ -248,7 +285,7 @@
     %strong Who can be a witness?
   %p
     Your witness should be somebody who knows you personally, but is not closely related to you. A friend
-    or co-worker is fine. Your spouse, sibling, parents or children are not. Your witness must be at least
+    or co-worker is fine. Your spouse, sibling, parents, or other children are not. Your witness must be at least
     18 years old.
 
 -####################################################################################################-
@@ -279,10 +316,10 @@
     %strong Do I have to have two witnesses?
   %p
     No, but you should. If you want to make a Deed Poll signed by only one witness, just leave the boxes blank.
-    But having a second witness helps to protect you in case the legitimacy of your Deed Poll is challenged.
+    But having a second witness helps to protect you in case the legitimacy of your child's Deed Poll is challenged.
 
   %p
     %strong This is the last question!
   %p
-    You're almost there. When you click the "Generate" button, your Deed Poll will be generated, and you'll be able
+    You're almost there. When you click the "Generate" button, your child's Deed Poll will be generated, and you'll be able
     to print it off and sign it.

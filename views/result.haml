@@ -41,8 +41,8 @@
 
     %h3 So that's it?
     %p
-      Yes!
-      %em As soon as you sign that document, you've changed your name.
+      %strong Yes!
+      As soon as you (a) sign that document and (b) start using your new name, you've changed your name.
       Congratulations!
     %p
       You still need to tell all of the people you do business with that you've changed
@@ -57,7 +57,7 @@
       .alert.alert-success
         %i.icon-star
         You can bookmark this page and come back to it at any time.
-        %a{:href => '#'} How does this work?
+        %a.has-popover{:href => '#', 'data-title' => 'How does this work?', 'data-content' => "We don't keep any of your personal information, so the entire web address of this page contains everything you typed in (in an encoded format): that's why the web address is so long! This means that you can bookmark this page and come back to it later, but we don't have to store your details.", 'data-placement' => 'bottom' } How does this work?
     .span2
 
 .row
