@@ -1,0 +1,16 @@
+{
+  "name": "Free Deed Poll",
+  "short_name": "Free Deed Poll",
+  "lang": "en-GB",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#a2c6da",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "background_color": "#fbfbfb"
+}

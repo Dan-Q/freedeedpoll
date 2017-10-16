@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Free Deed Poll</title>
+  <meta name="description" value="Change your name for free without a solicitor using a web-based tool and a printer.">
+  <link rel="stylesheet" type="text/css" href="/fdp.css">
+  <script type="text/javascript" src="/fdp.js" defer></script>
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Free Deed Poll">
+  <meta name="apple-mobile-web-app-title" content="Free Deed Poll">
+  <meta name="theme-color" content="#a2c6da">
+  <meta name="msapplication-navbutton-color" content="#a2c6da">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="msapplication-starturl" content="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- <link rel="icon" type="image/png" sizes="192x192" href="/icon.png">
+  <link rel="apple-touch-icon" type="image/png" sizes="192x192" href="/icon.png"> -->
+</head>
+<body>
+  <div id="page">
+    <header>
+      <hgroup>
+        <h1>Free Deed Poll</h1>
+        <h2>Change your name for free without a solicitor</h2>
+      </hgroup>
+    </header>
+    <nav>
+      <ul>
+        <li><a href="#change-your-name">Change your name</a></li>
+        <li><a href="#eligibility">Who can use this?</a></li>
+        <li><a href="#restrictions">What name can I choose?</a></li>
+      </ul>
+    </nav>
+    <main>
+      <section id="change-your-name">
+        <h3>Change your name</h3>
+        <p>
+          Fill in the form to generate a personalised deed poll that you can sign and use today.<br>
+          For more information, including eligibility and further instructions, click the relevant menu items.
+        </p>
+        <form class="not-loaded">
+          <div class="adult-child-selector">
+            <ul>
+              <li>
+                <label class="adult-wrapper">
+                  <input type="radio" name="adult-child" id="adult" checked>
+                  <i class="fa fa-male" aria-hidden="true"></i>
+                  <div>Adult deed poll</div>
+                </label>
+              </li>
+              <li>
+                <label class="child-wrapper">
+                  <input type="radio" name="adult-child" id="child">
+                  <i class="fa fa-child" aria-hidden="true"></i>
+                  <div>Child deed poll</div>
+                </label>
+              </li>
+            </ul>            
+          </div>
+
+          <label>
+            <div class="adult-only">Old name:</div>
+            <div class="child-only">Child's old name:</div>
+            <input type="text" id="old-name">
+          </label>
+          <label>
+            <div class="adult-only">New name:</div>
+            <div class="child-only">Child's new name:</div>
+            <input type="text" id="new-name">
+          </label>
+
+          <label class="for-checkbox">
+            <div>Has first name changed?</div>
+            <input type="checkbox" id="first-name-changed" class="has-checkbox-indicator">
+            <svg class="checkbox-indicator" shape-rendering="optimizeQuality" preserveAspectRatio="xMidYMid meet" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+              <rect class="outer" fill="#BDBCB9" x="0" y="0" width="64" height="64" rx="8"></rect>
+              <rect class="inner" fill="#BDBCB9" x="4" y="4" width="56" height="56" rx="4"></rect>
+              <polyline class="check" stroke="#FFFFFF" stroke-dasharray="270" stroke-dashoffset="270" stroke-width="8" stroke-linecap="round" fill="none" stroke-linejoin="round" points="16 31.8 27.4782609 43 49 22"></polyline>
+            </svg>
+          </label>
+
+          <p>
+            <button id="submit">Generate deed poll</button>
+          </p>
+        </form>
+      </section>
+
+      <section id="eligibility">
+        <h3>Eligibility</h3>
+        <p>
+          If you're a British citizen, you have a right to be known by
+          (<a href="#restrictions">almost</a>) any name you choose. A deed poll is simply a way of showing that you're
+          serious about your new name and can make it easier to persuade large companies (like your bank) and
+          government agencies (like the Passport Office) to update their records.
+        </p>
+        <p>
+          It's possible to pay somebody to write you out a deed poll, or to pay a solicitor to put a stamp on it,
+          but in the vast majority of cases this is an unnecessary expense, not to mention additional work on your
+          part. Using this website, you can produce a valid, widely-accepted deed poll for free and with minimal
+          effort.
+        </p>
+        <p>
+          You should read the rest of this page carefully before you start: changing your name is a serious undertaking
+          with real consequences and you ought to familiarise yourself with the procedure before you start.
+        </p>
+      </section>
+
+      <section id="restrictions">
+        <h3>Restrictions</h3>
+        <p>
+          
+        </p>
+      </section>
+    </main>
+    <footer>
+      <ul>
+        <li>&copy; <a href="https://danq.me/">Dan Q</a> 2011 &mdash;</li>
+        <li>
+          this software is
+          <a href="TODO: link license"><i class="fa fa-money" aria-hidden="true"></i> free</a>,
+          <a href="https://github.com/Dan-Q/freedeedpoll"><i class="fa fa-github" aria-hidden="true"></i> open source</a>,
+          and 
+          <a href="TODO: link privacy"><i class="fa fa-shield" aria-hidden="true"></i> safe</a>
+        </li>
+      </ul>
+    </footer>
+  </div>
+</body>
+</html>
