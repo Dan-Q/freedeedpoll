@@ -9,6 +9,7 @@
 /* General */
 * {
   box-sizing: border-box;
+  line-height: 1.4;
 }
 
 body {
@@ -155,24 +156,21 @@ h2 {
   text-transform: lowercase;
 }
 
-nav {
-background: #000;
-}
+nav {background: #a2c6da;}
 
-nav ul {
-margin: 0;
-padding: 0;
-list-style: none;
-display: flex;
-flex-wrap: wrap;
-}
+nav ul {margin: 0;padding: 0;list-style: none;display: flex;flex-wrap: wrap;text-align: center;}
 
 nav a, nav a:link {
-display: block;
-color: #ffffff;
-padding: 10px 15px;
-border-left: 2px solid #a2c6da;
-transition: background 0.3s;
+  display: block;
+  color: #ffffff;
+  background: #333333;
+  padding: 10px 15px;
+  border-left: 6px solid #a2c6da;
+  transition: background 0.3s, color 0.3s;
+}
+
+nav li {
+  flex-grow: 1;
 }
 
 nav li:first-child a, nav li:first-child a:link {
@@ -298,4 +296,38 @@ form button {
 
 .for-adult .adult-wrapper i, .for-child .child-wrapper i {
   color: #333;
+}
+
+/* Sections */
+
+main > section {
+  display: none;
+}
+
+.section-change-your-name #change-your-name,
+.section-eligibility #eligibility,
+.section-restrictions #restrictions,
+.section-next-steps #next-steps,
+.section-faq #faq {
+  display: block;
+}
+
+.section-change-your-name #nav-change-your-name,
+.section-eligibility #nav-eligibility,
+.section-restrictions #nav-restrictions,
+.section-next-steps #nav-next-steps,
+.section-faq #nav-faq {
+  background: white;
+  color: #333;
+}
+
+/* FAQ */
+
+.faq-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.faq-section h4 {
+  grid-column: 1 / 4;
 }
