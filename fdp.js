@@ -26,6 +26,14 @@ pdfMake.fonts = {
 // Check ()=>{} compatibility and nag if necessary
 if(!Modernizr.arrow || !Modernizr.bloburls) alert('This website requires a modern web browser. Visit browsehappy.com or whatbrowser.org for instructions on upgrading to a modern web browser.');
 
+// Convenience functions
+// String#trim - returns string with leading/trailing whitespace removed
+if(typeof(String.prototype.trim) === 'undefined') {
+  String.prototype.trim = () => {
+    return String(this).replace(/^\s+|\s+$/g, '');
+  };
+}
+
 // Ready function - run when the application starts
 const ready = () => {
   // Constants
@@ -44,7 +52,7 @@ const ready = () => {
     } else if(child.checked){
       form.classList.add('for-child');
     }
-  }
+  };
 
   const formParams = () => {
     let params = {};
@@ -52,16 +60,20 @@ const ready = () => {
       if(e.type == 'radio' || e.type == 'checkbox'){
         params[e.id] = e.checked;
       } else {
-        params[e.id] = e.value;
+        params[e.id] = e.value.trim();
       }
     });
     return params;
-  }
+  };
 
   const validate = () => {
     const params = formParams();
-    return true;
-  }
+    let errors = [];
+    if(params.oldName == '') errors.push({ field: 'oldName', error: 'Old name is required.' })
+    if(params.newName == '') errors.push({ field: 'newName', error: 'New name is required.' })
+    if(params.newName == params.oldName) errors.push({ field: 'newName', error: 'New name must be different from old name.' })
+    return (errors.length > 0 ? errors : false);
+  };
 
   const generateDeedPoll = () => {
     let content = [{ text: "Deed of Change of Name", style: 'title' }, "\n\n"];
@@ -94,7 +106,7 @@ const ready = () => {
       content: content
     };
     pdfMake.createPdf(docDefinition).open();
-  }
+  };
 
   const defaultHash = document.querySelector('nav a').href.split('#')[1];
   const hashChange = (e) => {
@@ -103,7 +115,7 @@ const ready = () => {
     if(!newHash) newHash = defaultHash;
     body.classList.remove(...sectionClasses);
     body.classList.add(`section-${newHash}`);
-  }
+  };
 
   // Handle page switching and switch to first page
   window.addEventListener('hashchange', hashChange);
@@ -112,17 +124,27 @@ const ready = () => {
   adultChildChanged();
   adult.addEventListener('change', adultChildChanged);
   child.addEventListener('change', adultChildChanged);
+  // Undo validation errors/warnings when a field is changes
+  document.querySelectorAll('input, textarea, select').forEach(el => {
+    el.addEventListener('change', e => {
+      e.target.parentNode.classList.remove('error', 'warning');
+    });
+  });
   // Generate PDF when requested
   submit.addEventListener('click', (e) => {
     e.preventDefault();
-    if(validate()) generateDeedPoll();
+    const validationErrors = validate();
+    if(!validationErrors) return generateDeedPoll();
+    validationErrors.forEach(error => {
+      document.getElementById(error.field).parentNode.classList.add('error');
+    });
   });
   // Mark form as loaded
   form.classList.remove('not-loaded');
   form.classList.add('loaded');
   // Focus on first field
   document.querySelector('input[type=text]').focus();
-}
+};
 
 // When loaded, run ready()
 if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {

@@ -298,6 +298,28 @@ form button {
   color: #333;
 }
 
+/* Validation */
+
+.on-errors {
+  margin-left: 8px;
+  opacity: 0;
+  font-size: 22px;
+  transition: opacity 0.3s;
+}
+
+.error .on-errors {
+  color: #bf0000;
+  opacity: 1;
+}
+
+input, textarea, select {
+  transition: border-color 0.3s;
+}
+
+.error input, .error textarea, .error select {
+  border-color: #bf0000;
+}
+
 /* Sections */
 
 main > section {
