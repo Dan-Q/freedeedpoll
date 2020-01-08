@@ -6,6 +6,7 @@
   <meta name="description" value="Change your name for free without a solicitor using a web-based tool and a printer.">
   <link rel="stylesheet" type="text/css" href="/fdp.css">
   <script type="text/javascript" src="/pdfmake.min.js" defer></script>
+  <script type="text/javascript" src="/pdfmake.fonts.js" defer></script>
   <script type="text/javascript" src="/fdp.js" defer></script>
   <link rel="manifest" href="manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
@@ -67,29 +68,53 @@
             </ul>
           </div>
 
-          <label>
-            <div class="adult-only">Old name:</div>
-            <div class="child-only">Child's old name:</div>
-            <input type="text" id="oldName">
-            <i class="on-errors fa fa-exclamation-triangle" aria-hidden="true"></i>
-          </label>
-          <label>
-            <div class="adult-only">New name:</div>
-            <div class="child-only">Child's new name:</div>
-            <input type="text" id="newName">
-            <i class="on-errors fa fa-exclamation-triangle" aria-hidden="true"></i>
-          </label>
+          <div class="form-section adult-only">
+            <label>
+              <div>Old name:</div>
+              <input type="text" name="oldName">
+              <i class="on-errors fa fa-exclamation-triangle" aria-hidden="true"></i>
+            </label>
+            <label>
+              <div>New name:</div>
+              <input type="text" name="newName">
+              <i class="on-errors fa fa-exclamation-triangle" aria-hidden="true"></i>
+            </label>
 
-          <label class="for-checkbox">
-            <div>Has first name changed?</div>
-            <input type="checkbox" id="firstNameChanged" class="has-checkbox-indicator">
-            <svg class="checkbox-indicator" shape-rendering="optimizeQuality" preserveAspectRatio="xMidYMid meet" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-              <rect class="outer" fill="#BDBCB9" x="0" y="0" width="64" height="64" rx="8"></rect>
-              <rect class="inner" fill="#BDBCB9" x="4" y="4" width="56" height="56" rx="4"></rect>
-              <polyline class="check" stroke="#FFFFFF" stroke-dasharray="270" stroke-dashoffset="270" stroke-width="8" stroke-linecap="round" fill="none" stroke-linejoin="round" points="16 31.8 27.4782609 43 49 22"></polyline>
-            </svg>
-            <i class="on-errors fa fa-exclamation-triangle" aria-hidden="true"></i>
-          </label>
+            <label class="for-checkbox">
+              <div>Has first name changed?</div>
+              <input type="checkbox" name="firstNameChanged" class="has-checkbox-indicator">
+              <svg class="checkbox-indicator" shape-rendering="optimizeQuality" preserveAspectRatio="xMidYMid meet" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <rect class="outer" fill="#BDBCB9" x="0" y="0" width="64" height="64" rx="8"></rect>
+                <rect class="inner" fill="#BDBCB9" x="4" y="4" width="56" height="56" rx="4"></rect>
+                <polyline class="check" stroke="#FFFFFF" stroke-dasharray="270" stroke-dashoffset="270" stroke-width="8" stroke-linecap="round" fill="none" stroke-linejoin="round" points="16 31.8 27.4782609 43 49 22"></polyline>
+              </svg>
+              <i class="on-errors fa fa-exclamation-triangle" aria-hidden="true"></i>
+            </label>
+          </div>
+
+          <div class="form-section child-only">
+            <label>
+              <div>Child's old name:</div>
+              <input type="text" name="oldName">
+              <i class="on-errors fa fa-exclamation-triangle" aria-hidden="true"></i>
+            </label>
+            <label>
+              <div>Child's new name:</div>
+              <input type="text" name="newName">
+              <i class="on-errors fa fa-exclamation-triangle" aria-hidden="true"></i>
+            </label>
+
+            <label class="for-checkbox">
+              <div>Has first name changed?</div>
+              <input type="checkbox" name="firstNameChanged" class="has-checkbox-indicator">
+              <svg class="checkbox-indicator" shape-rendering="optimizeQuality" preserveAspectRatio="xMidYMid meet" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <rect class="outer" fill="#BDBCB9" x="0" y="0" width="64" height="64" rx="8"></rect>
+                <rect class="inner" fill="#BDBCB9" x="4" y="4" width="56" height="56" rx="4"></rect>
+                <polyline class="check" stroke="#FFFFFF" stroke-dasharray="270" stroke-dashoffset="270" stroke-width="8" stroke-linecap="round" fill="none" stroke-linejoin="round" points="16 31.8 27.4782609 43 49 22"></polyline>
+              </svg>
+              <i class="on-errors fa fa-exclamation-triangle" aria-hidden="true"></i>
+            </label>
+          </div>
 
           <p>
             <button id="submit">Generate deed poll</button>
