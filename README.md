@@ -1,22 +1,37 @@
-freedeedpoll
-============
+# Free Deed Poll
 
-If you simply want to make yourself a free UK Deed Poll document, there's a hosted version of
-this application at http://www.freedeedpoll.org.uk/ - go to that web site, fill in the form,
-print your Deed Poll, sign it... and you're done!
+Modernised version of https://www.freedeedpoll.org.uk/. Runs entirely in the browser.
 
-License
--------
+Under development.
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+## Usage
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+...
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see http://www.gnu.org/licenses/.
+## Development
+
+### Development dependencies
+
+- NodeJS v18+
+
+### Setting up a development environment
+
+1. Check out this repository
+2. Run `npm i` to install dependencies
+3. Run `npm start` to run a development server
+4. Visit http://localhost:8080/
+
+## Deployment
+
+### Build for deployment
+
+From your development environment, run `npm run build`. The generated site will be output into the
+`_site` directory as a static site. Upload this onto virtually any web host.
+
+### Deploying to GitHub Pages
+
+...
+
+## License
+
+AGPL.
