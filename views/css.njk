@@ -2,3 +2,9 @@
 permalink: fdp.css
 ---
 {% include "../node_modules/@picocss/pico/css/pico.min.css" %}
+
+/* JS detection */
+body.no-js .yes-js,
+body.yes-js .no-js {
+  display: none;
+}

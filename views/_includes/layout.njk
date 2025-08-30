@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en-gb" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="/fdp.css">
+</head>
+<body class="no-js">
+  <header class="container">
+    Free Deed Poll
+  </header>
+
+  <nav class="container">
+    <ul>
+      <li><a href="/start">Change your name now!</a></li>
+      <li><a href="/faq">FAQ</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+    {{ content | safe }}
+  </main>
+
+  <footer class="container">
+    {% copyright %}
+  </footer>
+
+  <script src="/fdp.js"></script>
+</body>
+</html>
