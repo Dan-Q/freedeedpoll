@@ -3,8 +3,108 @@ permalink: fdp.css
 ---
 {% include "../node_modules/@picocss/pico/css/pico.min.css" %}
 
+/* Colous */
+:root {
+  --header-background-color: #D1E5FB;
+  --nav-background-color: #FCEFD9;
+
+  @media (prefers-color-scheme: dark) {
+    --header-background-color: #033452;
+    --nav-background-color: #312302;
+  }
+  &[data-theme="dark"] {
+    --header-background-color: #033452;
+    --nav-background-color: #312302;
+  }
+}
+
+/* Popover */
+[popover] {
+  max-width: 95vw;
+  max-height: 95vh;
+}
+
+/* Popover backdrop */
+::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
 /* JS detection */
 body.no-js .yes-js,
 body.yes-js .no-js {
   display: none;
+}
+
+/* Header */
+.site-header {
+  background-color: var(--header-background-color);
+  padding: 1rem 0;
+}
+
+.title-container {
+  display: grid;
+  grid-template: 'icon title' auto
+                 'icon subtitle' auto / auto 1fr;
+}
+
+.title-icon {
+  font-size: 3rem;
+  margin: 0;
+  grid-area: icon;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 2rem;
+  margin: 0;
+  grid-area: title;
+
+  a {
+    text-decoration: none;
+    --pico-color: var(--pico-h1-color);
+  }
+}
+
+.subtitle {
+  font-size: 1rem;
+  margin: 0;
+  grid-area: subtitle;
+}
+
+/* Nav */
+
+.site-nav {
+  background-color: var(--nav-background-color);
+}
+
+/* Main */
+
+.site-main {
+  min-height: 85vh;
+}
+
+/* Footer */
+
+.site-footer {
+  background-color: var(--nav-background-color);
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: 0.8rem;
+  }
+
+  li {
+    list-style: none;
+    padding: 0 1.2rem;
+    border-right: 1px solid var(--pico-color);
+
+    &:last-child {
+      border-right: none;
+    }
+  }
 }

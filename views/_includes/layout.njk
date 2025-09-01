@@ -8,23 +8,47 @@
   <link rel="stylesheet" href="/fdp.css">
 </head>
 <body class="no-js">
-  <header class="container">
-    Free Deed Poll
+  <header class="container-fluid site-header">
+    <div class="container title-container">
+      <div class="title-icon" aria-hidden="true">📜</div>
+      <div class="title">
+        <a href="/">
+          Free Deed Poll
+        </a>
+      </div>
+      <div class="subtitle">
+        Legally change your name for free
+      </div>
+    </div>
   </header>
 
-  <nav class="container">
-    <ul>
-      <li><a href="/start">Change your name now!</a></li>
-      <li><a href="/faq">FAQ</a></li>
-    </ul>
+  <nav class="container-fluid site-nav">
+    <div class="container">
+      <ul>
+        <li><a href="/start">Change your name now!</a></li>
+        <li><a href="/faq">FAQ</a></li>
+      </ul>
+    </div>
   </nav>
 
-  <main class="container">
+  <main class="container site-main">
     {{ content | safe }}
   </main>
 
-  <footer class="container">
-    {% copyright %}
+  <footer class="container-fluid site-footer">
+    <div class="container">
+      <ul>
+        <li>
+          {% copyright %}
+        </li>
+        <li>
+          <a href="https://github.com/Dan-Q/freedeedpoll">open source</a>
+        </li>
+        <li>
+          <a href="/privacy">privacy / cookies</a>
+        </li>
+      </ul>
+    </div>
   </footer>
 
   <script src="/fdp.js"></script>
