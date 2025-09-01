@@ -47,7 +47,7 @@ function generateDeedPoll(form) {
   const MARGIN_RIGHT     =  15   ; // mm
   const A4_WIDTH         = 210   ; // mm
   const TITLE_FONT_SIZE  =  24   ; // points
-  const BODY_FONT_SIZE   =  14   ; // points
+  const BODY_FONT_SIZE   =  12   ; // points
   const MAGIC_NUMBER_1   = 175   ;
   const MAGIC_NUMBER_2   =   0.35;
   const MAGIC_NUMBER_3   = 500   ;
@@ -152,39 +152,39 @@ function generateDeedPoll(form) {
     §§BY THIS DEED OF CHANGE OF NAME§§ made by myself the undersigned
     §§${submission.newName}§§ of §§${submission.address}§§ in the County of §§${submission.county}§§
     formerly known as §§${submission.oldName}§§, a British Citizen
-  `, 60, MARGIN_LEFT, MAGIC_NUMBER_3);
+  `, 45, MARGIN_LEFT, MAGIC_NUMBER_3);
   addPara(`
     §§HEREBY DECLARE AS FOLLOWS:§§
-  `, 90, MARGIN_LEFT, MAGIC_NUMBER_3);
+  `, 70, MARGIN_LEFT, MAGIC_NUMBER_3);
   addPara(`
     §§I. §§
-  `, 110, MARGIN_LEFT, MAGIC_NUMBER_3);
+  `, 82, MARGIN_LEFT, MAGIC_NUMBER_3);
   addPara(`
     §§I ABSOLUTELY§§ and entirely renounce, relinquish and abandon the use of my said former name
     §§${submission.oldName}§§ and assume, adopt and determine to take and use from the date hereof the name of
     §§${submission.newName}§§ in substitution for my former name of §§${submission.oldName}§§
-  `, 110, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - (16 * 3));
+  `, 82, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - (16 * 3));
   addPara(`
     §§II. §§
-  `, 150, MARGIN_LEFT, MAGIC_NUMBER_3);
+  `, 112, MARGIN_LEFT, MAGIC_NUMBER_3);
   addPara(`
     §§I SHALL AT ALL TIMES§§ hereafter in all records, deeds documents and other writings and in all actions and
     proceedings as well as in all dealings and transactions and on all occasions whatsoever use and subscribe the
     said name of §§${submission.newName}§§ as my name, in substitution for my former name of
     §§${submission.oldName}§§ so relinquished as aforesaid to the intent that I may hereafter be called known or
     distinguished not by the former name of §§${submission.oldName}§§ but by the name §§${submission.newName}§§
-  `, 150, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - (16 * 3));
+  `, 112, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - (16 * 3));
   addPara(`
     §§III. §§
-  `, 200, MARGIN_LEFT, MAGIC_NUMBER_3);
+  `, 154, MARGIN_LEFT, MAGIC_NUMBER_3);
   addPara(`
     §§I AUTHORISE AND REQUIRE§§ all persons at all times to designate, describe, and address me by the adopted
     name of  §§${submission.newName}§§
-  `, 200, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - (16 * 3));
+  `, 154, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - (16 * 3));
   addPara(`
     §§IN WITNESS§§ whereof I have hereunto subscribed my adopted and substituted name of
     §§${submission.newName}§§ and also my said former name of §§${submission.oldName}§§.
-  `, 220, MARGIN_LEFT, MAGIC_NUMBER_3);
+  `, 174, MARGIN_LEFT, MAGIC_NUMBER_3);
   // TODO: Notwithstanding the decision of Mr Justice Vaisey in re Parrott, Cox v Parrott, the applicant wishes the enrolment to proceed.
   // TODO: SIGNED AS A DEED THIS #{day.ordinalize.upcase} DAY OF #{month.upcase} IN THE YEAR #{year}
   // TODO: [signatures] by the above name {new} | by the above name {old}
