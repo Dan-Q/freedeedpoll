@@ -24,6 +24,7 @@
   "dependencies": {
     "@11ty/eleventy": "^3.1.2",
     "@picocss/pico": "^2.1.1",
+    "esbuild": "^0.25.9",
     "jspdf": "^3.0.2"
   }
 }
