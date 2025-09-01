@@ -6,15 +6,21 @@ permalink: fdp.css
 /* Colous */
 :root {
   --header-background-color: #D1E5FB;
+  --header-color: #033452;
   --nav-background-color: #FCEFD9;
+  --nav-color: #033452;
 
   @media (prefers-color-scheme: dark) {
     --header-background-color: #033452;
+    --header-color: #EEEEEE;
     --nav-background-color: #312302;
+    --nav-color: #BBBBBB;
   }
   &[data-theme="dark"] {
     --header-background-color: #033452;
+    --header-color: #EEEEEE;
     --nav-background-color: #312302;
+    --nav-color: #BBBBBB;
   }
 }
 
@@ -49,7 +55,7 @@ body.yes-js .no-js {
 
 .title-icon {
   font-size: 3rem;
-  margin: 0;
+  margin: 0 0.4rem 0 0;
   grid-area: icon;
 }
 
@@ -61,7 +67,7 @@ body.yes-js .no-js {
 
   a {
     text-decoration: none;
-    --pico-color: var(--pico-h1-color);
+    --pico-color: var(--header-color) !important;
   }
 }
 
@@ -69,12 +75,14 @@ body.yes-js .no-js {
   font-size: 1rem;
   margin: 0;
   grid-area: subtitle;
+  color: var(--header-color)
 }
 
 /* Nav */
 
 .site-nav {
   background-color: var(--nav-background-color);
+  color: var(--nav-color);
 }
 
 /* Main */
@@ -102,6 +110,7 @@ body.yes-js .no-js {
     list-style: none;
     padding: 0 1.2rem;
     border-right: 1px solid var(--pico-color);
+    color: var(--nav-color);
 
     &:last-child {
       border-right: none;
