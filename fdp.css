@@ -96,13 +96,19 @@ body.yes-js .no-js {
 .deed-poll-checklist {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
 
   li {
     display: grid;
     grid-template: 'checkbox label' auto
                    'checkbox small' auto / auto 1fr;
     align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px dotted #777;
+
+    &:last-child {
+      border-bottom: none;
+    }
 
     input {
       grid-area: checkbox;

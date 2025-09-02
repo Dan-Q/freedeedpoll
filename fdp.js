@@ -32749,7 +32749,11 @@
   function formData(form) {
     let obj = {};
     Array.from(form.elements).filter((e2) => e2.dataset.id).forEach((e2) => {
-      obj[e2.dataset.id] = e2.value;
+      if (e2.type === "checkbox") {
+        obj[e2.dataset.id] = e2.checked;
+      } else {
+        obj[e2.dataset.id] = e2.value;
+      }
     });
     return obj;
   }
@@ -32770,21 +32774,35 @@
   var deedPollValidationErrors = document.getElementById("deed-poll-validation-errors");
   var deedPollValidationErrorsList = document.getElementById("deed-poll-validation-errors-list");
   var deedPollSkipValidation = document.getElementById("skip-validation");
-  if (deedPollForm && window.location.hash.length > 0) {
-    b64ToForm(window.location.hash.slice(1), deedPollForm);
-    generateDeedPoll(deedPollForm);
-  }
   function validateDeedPoll(form, disallowBlanks = false) {
     console.log("validateDeedPoll", form, disallowBlanks);
     const submission = formData(form);
+    if (!submission) return true;
     const validationErrors = [];
     if (disallowBlanks) {
       if (submission.oldName === "") validationErrors.push({ field: "oldName", message: 'The "old name" field is blank.' });
       if (submission.newName === "") validationErrors.push({ field: "newName", message: 'The "new name" field is blank.' });
       if (submission.address === "") validationErrors.push({ field: "address", message: 'The "address" field is blank.' });
       if (submission.county === "") validationErrors.push({ field: "county", message: 'The "county" field is blank.' });
+      if (submission.date === "") validationErrors.push({ field: "date", message: 'The "date" field is blank.' });
     }
     if (submission.newName === submission.oldName) validationErrors.push({ field: "newName", message: 'The "old name" and "new name" are the same.' });
+    if (!submission.oldName.match(/\S+\s+\S+/)) validationErrors.push({ field: "oldName", message: "Your old name looks like it only contains one name." });
+    if (!submission.newName.match(/\S+\s+\S+/)) validationErrors.push({ field: "newName", message: "Your new name looks like it only contains one name." });
+    if (!submission.newName.match(/^[a-z\s\-\']+$/i)) validationErrors.push({ field: "newName", message: `
+    Your new name contains characters that don't appear in the Latin alphabet. This isn't necessarily a problem, but your name may be
+    adapted for use in some contexts (e.g. your Passport may require a Latinised version of your name).
+  ` });
+    const suspectedOldFirstName = submission.oldName.split(" ")[0];
+    const suspectedNewFirstName = submission.newName.split(" ")[0];
+    if (suspectedOldFirstName !== suspectedNewFirstName && !submission.firstNameChanged)
+      validationErrors.push({ field: "firstNameChanged", message: `
+      It looks like you've changed your first name, but not ticked the "I've changed my first name" box.
+    ` });
+    if (suspectedOldFirstName == suspectedNewFirstName && submission.firstNameChanged)
+      validationErrors.push({ field: "firstNameChanged", message: `
+      You've ticked the "I've changed my first name" box, but it doesn't look like you haven't changed your first name.
+    ` });
     if (validationErrors.length > 0) {
       deedPollValidationErrors.hidden = false;
       deedPollValidationErrorsList.innerHTML = validationErrors.map((error) => `<li>\u26A0\uFE0F ${error.message}</li>`).join("");
@@ -32825,8 +32843,9 @@
     doc.text(A4_WIDTH / 2, 30, "Deed of Change of Name", { align: "center" });
     doc.setFont("Helvetica", "normal");
     doc.setFontSize(BODY_FONT_SIZE);
-    function addPara(unformattedText, startY, startX, width) {
-      const text2 = unformattedText.replace(/[\n ]+/g, " ").trim();
+    function addPara(unformattedText, startY, startX, width, htmlStart = "<p>", htmlEnd = "</p>") {
+      const text2 = unformattedText.replace(`${BOLD_CHAR}${BOLD_CHAR}${BOLD_CHAR}${BOLD_CHAR}`, "").replace(/[\n ]+/g, " ").trim();
+      console.log(text2);
       const startXCached = startX;
       const lineSpacing = doc.getLineHeightFactor() + BODY_FONT_SIZE * MAGIC_NUMBER_4;
       let textObject = getTextRows(text2, width);
@@ -32844,7 +32863,7 @@
         startY += lineSpacing;
       });
       const htmlText = text2.replace(BOLD_BLOCK_REGEX, `<strong>$2</strong>`);
-      html2 += `<p>${htmlText}</p>`;
+      html2 += `${htmlStart}${htmlText}${htmlEnd}`;
     }
     ;
     function getTextRows(inputValue, width) {
@@ -32896,34 +32915,34 @@
   `, 70, MARGIN_LEFT, MAGIC_NUMBER_3);
     addPara(`
     \xA7\xA7I. \xA7\xA7
-  `, 82, MARGIN_LEFT, MAGIC_NUMBER_3);
+  `, 82, MARGIN_LEFT, MAGIC_NUMBER_3, "<p>", "");
     addPara(`
     \xA7\xA7I ABSOLUTELY\xA7\xA7 and entirely renounce, relinquish and abandon the use of my said former name
     \xA7\xA7${submission.oldName}\xA7\xA7 and assume, adopt and determine to take and use from the date hereof the name of
     \xA7\xA7${submission.newName}\xA7\xA7 in substitution for my former name of \xA7\xA7${submission.oldName}\xA7\xA7
-  `, 82, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - 16 * 3);
+  `, 82, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - 16 * 3, "", "</p>");
     addPara(`
     \xA7\xA7II. \xA7\xA7
-  `, 112, MARGIN_LEFT, MAGIC_NUMBER_3);
+  `, 112, MARGIN_LEFT, MAGIC_NUMBER_3, "<p>", "");
     addPara(`
     \xA7\xA7I SHALL AT ALL TIMES\xA7\xA7 hereafter in all records, deeds documents and other writings and in all actions and
     proceedings as well as in all dealings and transactions and on all occasions whatsoever use and subscribe the
     said name of \xA7\xA7${submission.newName}\xA7\xA7 as my name, in substitution for my former name of
     \xA7\xA7${submission.oldName}\xA7\xA7 so relinquished as aforesaid to the intent that I may hereafter be called known or
     distinguished not by the former name of \xA7\xA7${submission.oldName}\xA7\xA7 but by the name \xA7\xA7${submission.newName}\xA7\xA7
-  `, 112, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - 16 * 3);
+  `, 112, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - 16 * 3, "", "</p>");
     addPara(`
     \xA7\xA7III. \xA7\xA7
-  `, 154, MARGIN_LEFT, MAGIC_NUMBER_3);
+  `, 154, MARGIN_LEFT, MAGIC_NUMBER_3, "<p>", "");
     addPara(`
     \xA7\xA7I AUTHORISE AND REQUIRE\xA7\xA7 all persons at all times to designate, describe, and address me by the adopted
     name of  \xA7\xA7${submission.newName}\xA7\xA7
-  `, 154, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - 16 * 3);
+  `, 154, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - 16 * 3, "", "</p>");
     addPara(`
     \xA7\xA7IN WITNESS\xA7\xA7 whereof I have hereunto subscribed my adopted and substituted name of
     \xA7\xA7${submission.newName}\xA7\xA7 and also my said former name of \xA7\xA7${submission.oldName}\xA7\xA7.
   `, 174, MARGIN_LEFT, MAGIC_NUMBER_3);
-    const title = `Deed Poll for ${submission.newName}`;
+    const title = submission.newName && submission.newName.trim().length > 0 ? `Deed Poll for ${submission.newName}` : "Your Deed Poll";
     document.title = title;
     const pdfData = doc.output("datauristring");
     html2 = `
@@ -32955,10 +32974,21 @@
       <button class="outline" popovertarget="deed-poll-text">Show Text</button>
     </p>
     <p>
-      Print and sign your deed poll, then get started with the next steps:
+      Now you should:
+    </p>
+    <ol>
+      <li>Print your deed poll (print a few copies!)</li>
+      <li>Sign your deed poll in both your old and new names</li>
+      <li>Get your witnesses to sign it, too</li>
+    </ol>
+    <p>
+      Congratulations; that's all you need to do to have legally changed your name! But there's a couple of
+      extra steps you'll want to get started with to make sure that your new name is properly represented
+      everywhere you use it:
     </p>
     <p style="text-align: center;">
-      <a href="/next" role="button" class="outline">What do I do next?</a>
+      <a href="/next" role="button">What do I do next?</a>
+      <a href="/faq" role="button" class="outline">Got more questions?</a>
     </p>
     <p>
       <small>
@@ -32974,6 +33004,13 @@
     h1.scrollIntoView({ behavior: "smooth" });
   }
   if (deedPollForm) {
+    if (window.location.hash.length > 0) {
+      b64ToForm(window.location.hash.slice(1), deedPollForm);
+      generateDeedPoll(deedPollForm);
+    }
+    if (!deedPollForm.querySelector('[data-id="date"]').value) {
+      deedPollForm.querySelector('[data-id="date"]').value = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+    }
     deedPollForm.addEventListener("input", (e2) => {
       if (e2.target.dataset.id == "skipValidation") return;
       validateDeedPoll(deedPollForm);
