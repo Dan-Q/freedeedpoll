@@ -91,6 +91,33 @@ body.yes-js .no-js {
   min-height: 85vh;
 }
 
+/* Checklist page */
+
+.deed-poll-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  li {
+    display: grid;
+    grid-template: 'checkbox label' auto
+                   'checkbox small' auto / auto 1fr;
+    align-items: center;
+
+    input {
+      grid-area: checkbox;
+    }
+
+    label {
+      grid-area: label;
+    }
+
+    small {
+      grid-area: small;
+    }
+  }
+}
+
 /* Footer */
 
 .site-footer {
