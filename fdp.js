@@ -32767,9 +32767,41 @@
   var deedPollForm = document.getElementById("deed-poll");
   var deedPollResult = document.getElementById("deed-poll-result");
   var deedPollModify = document.getElementById("deed-poll-modify");
+  var deedPollValidationErrors = document.getElementById("deed-poll-validation-errors");
+  var deedPollValidationErrorsList = document.getElementById("deed-poll-validation-errors-list");
+  var deedPollSkipValidation = document.getElementById("skip-validation");
   if (deedPollForm && window.location.hash.length > 0) {
     b64ToForm(window.location.hash.slice(1), deedPollForm);
     generateDeedPoll(deedPollForm);
+  }
+  function validateDeedPoll(form, disallowBlanks = false) {
+    console.log("validateDeedPoll", form, disallowBlanks);
+    const submission = formData(form);
+    const validationErrors = [];
+    if (disallowBlanks) {
+      if (submission.oldName === "") validationErrors.push({ field: "oldName", message: 'The "old name" field is blank.' });
+      if (submission.newName === "") validationErrors.push({ field: "newName", message: 'The "new name" field is blank.' });
+      if (submission.address === "") validationErrors.push({ field: "address", message: 'The "address" field is blank.' });
+      if (submission.county === "") validationErrors.push({ field: "county", message: 'The "county" field is blank.' });
+    }
+    if (submission.newName === submission.oldName) validationErrors.push({ field: "newName", message: 'The "old name" and "new name" are the same.' });
+    if (validationErrors.length > 0) {
+      deedPollValidationErrors.hidden = false;
+      deedPollValidationErrorsList.innerHTML = validationErrors.map((error) => `<li>\u26A0\uFE0F ${error.message}</li>`).join("");
+    } else {
+      deedPollValidationErrors.hidden = true;
+      deedPollSkipValidation.checked = false;
+    }
+    for (const element of deedPollForm.elements) {
+      if (validationErrors.some((error) => error.field === element.dataset.id)) {
+        element.ariaInvalid = true;
+      } else if (element.value !== "") {
+        element.ariaInvalid = false;
+      } else {
+        element.ariaInvalid = null;
+      }
+    }
+    return validationErrors.length === 0;
   }
   function generateDeedPoll(form) {
     window.location.hash = formToB64(form);
@@ -32942,20 +32974,30 @@
     deedPollModify.hidden = false;
     h1.scrollIntoView({ behavior: "smooth" });
   }
-  deedPollForm.addEventListener("submit", (e2) => {
-    e2.preventDefault();
-    const submitButton = e2.target.querySelector('button[type="submit"]');
-    for (const input of e2.target.elements) input.disabled = true;
-    submitButton.ariaBusy = true;
-    new Promise((resolve) => {
-      generateDeedPoll(e2.target);
-      setTimeout(resolve, 300);
-    }).then(() => {
-      for (const input of e2.target.elements) input.disabled = false;
-      submitButton.ariaBusy = false;
-      submitButton.classList.add("outline");
+  if (deedPollForm) {
+    deedPollForm.addEventListener("input", (e2) => {
+      if (e2.target.dataset.id == "skipValidation") return;
+      validateDeedPoll(deedPollForm);
+    }, { capture: true, passive: true });
+    deedPollForm.addEventListener("submit", (e2) => {
+      e2.preventDefault();
+      if (!validateDeedPoll(e2.target, true) && !deedPollSkipValidation.checked) {
+        deedPollValidationErrors.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+      const submitButton = e2.target.querySelector('button[type="submit"]');
+      for (const input of e2.target.elements) input.disabled = true;
+      submitButton.ariaBusy = true;
+      new Promise((resolve) => {
+        generateDeedPoll(e2.target);
+        setTimeout(resolve, 300);
+      }).then(() => {
+        for (const input of e2.target.elements) input.disabled = false;
+        submitButton.ariaBusy = false;
+        submitButton.classList.add("outline");
+      });
     });
-  });
+  }
 })();
 /*! Bundled license information:
 
