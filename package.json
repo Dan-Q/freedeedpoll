@@ -1,0 +1,30 @@
+{
+  "name": "freedeedpoll",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "eleventy --serve",
+    "build": "eleventy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dan-Q/freedeedpoll.git"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Dan Q",
+    "email": "fdp@danq.me",
+    "url": "https://danq.me/"
+  },
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Dan-Q/freedeedpoll/issues"
+  },
+  "homepage": "https://github.com/Dan-Q/freedeedpoll#readme",
+  "type": "module",
+  "dependencies": {
+    "@11ty/eleventy": "^3.1.2",
+    "@picocss/pico": "^2.1.1",
+    "esbuild": "^0.25.9",
+    "jspdf": "^3.0.2"
+  }
+}
