@@ -47,6 +47,18 @@ layout: layout.njk
       The county in which you live.
     </small>
   </p>
+
+  <article id="deed-poll-validation-errors" hidden>
+    <p>
+      Please check a few things:
+    </p>
+    <ul id="deed-poll-validation-errors-list"></ul>
+    <p>
+      <input type="checkbox" id="skip-validation" data-id="skipValidation">
+      <label for="skip-validation">I've read these warnings and want to continue anyway.</label>
+    </p>
+  </article>
+
   <p>
     <button type="submit">Create Deed Poll</button>
   </p>
