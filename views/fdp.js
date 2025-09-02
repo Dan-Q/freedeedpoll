@@ -271,11 +271,10 @@ function generateDeedPoll(form) {
     </p>
     <p>
       <small>
-        By the way: you can bookmark this page to easily come back to it later, with the details you entered already
+        You can bookmark this page to easily come back to it later, with the details you entered already
         filled in.
         <br>
-        If you share this page's address with anybody, they'll see it pre-filled with your details too. If that's not
-        what you want, just tell people to go directly to <strong>www.freedeedpoll.org.uk</strong>.
+        If you share this page's address with anybody, they'll see it pre-filled with your details too.
       </small>
     </p>
   `;
