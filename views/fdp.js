@@ -8,7 +8,11 @@ document.body.classList.add('yes-js');
 function formData(form) {
   let obj = {};
   Array.from(form.elements).filter(e=>e.dataset.id).forEach(e=>{
-    obj[e.dataset.id] = e.value;
+    if(e.type === 'checkbox') {
+      obj[e.dataset.id] = e.checked
+    } else {
+      obj[e.dataset.id] = e.value;
+    }
   });
   return obj;
 }
@@ -33,14 +37,10 @@ const deedPollValidationErrors = document.getElementById('deed-poll-validation-e
 const deedPollValidationErrorsList = document.getElementById('deed-poll-validation-errors-list');
 const deedPollSkipValidation = document.getElementById('skip-validation');
 
-if(deedPollForm && window.location.hash.length > 0) {
-  b64ToForm(window.location.hash.slice(1), deedPollForm);
-  generateDeedPoll(deedPollForm);
-}
-
 function validateDeedPoll(form, disallowBlanks = false) {
   console.log('validateDeedPoll', form, disallowBlanks);
   const submission = formData(form);
+  if(!submission) return true;
   const validationErrors = [];
 
   if(disallowBlanks) {
@@ -48,9 +48,26 @@ function validateDeedPoll(form, disallowBlanks = false) {
     if(submission.newName === '') validationErrors.push({ field: 'newName', message: 'The "new name" field is blank.' });
     if(submission.address === '') validationErrors.push({ field: 'address', message: 'The "address" field is blank.' });
     if(submission.county === '') validationErrors.push({ field: 'county', message: 'The "county" field is blank.' });
+    if(submission.date === '') validationErrors.push({ field: 'date', message: 'The "date" field is blank.' });
   }
 
   if(submission.newName === submission.oldName) validationErrors.push({ field: 'newName', message: 'The "old name" and "new name" are the same.' });
+  if(!submission.oldName.match(/\S+\s+\S+/)) validationErrors.push({ field: 'oldName', message: 'Your old name looks like it only contains one name.' });
+  if(!submission.newName.match(/\S+\s+\S+/)) validationErrors.push({ field: 'newName', message: 'Your new name looks like it only contains one name.' });  
+  if(!submission.newName.match(/^[a-z\s\-\']+$/i)) validationErrors.push({ field: 'newName', message: `
+    Your new name contains characters that don't appear in the Latin alphabet. This isn't necessarily a problem, but your name may be
+    adapted for use in some contexts (e.g. your Passport may require a Latinised version of your name).
+  `});
+  const suspectedOldFirstName = submission.oldName.split(' ')[0];
+  const suspectedNewFirstName = submission.newName.split(' ')[0];
+  if(suspectedOldFirstName !== suspectedNewFirstName && !submission.firstNameChanged)
+    validationErrors.push({ field: 'firstNameChanged', message: `
+      It looks like you've changed your first name, but not ticked the "I've changed my first name" box.
+    `});
+  if(suspectedOldFirstName == suspectedNewFirstName && submission.firstNameChanged)
+    validationErrors.push({ field: 'firstNameChanged', message: `
+      You've ticked the "I've changed my first name" box, but it doesn't look like you haven't changed your first name.
+    `});
 
   // Show validation errors:
   if(validationErrors.length > 0) {
@@ -102,8 +119,11 @@ function generateDeedPoll(form) {
   doc.setFont('Helvetica', 'normal');
   doc.setFontSize(BODY_FONT_SIZE);
 
-  function addPara(unformattedText, startY, startX, width) {
-    const text = unformattedText.replace(/[\n ]+/g, ' ').trim();
+  function addPara(unformattedText, startY, startX, width, htmlStart = '<p>', htmlEnd = '</p>') {
+    const text = unformattedText.
+      replace(`${BOLD_CHAR}${BOLD_CHAR}${BOLD_CHAR}${BOLD_CHAR}`, ''). // remove empty bold blocks
+      replace(/[\n ]+/g, ' ').trim(); // remove space
+    console.log(text);
     
     // Add to PDF:
     const startXCached = startX;
@@ -128,7 +148,7 @@ function generateDeedPoll(form) {
 
     // Add to HTML:
     const htmlText = text.replace(BOLD_BLOCK_REGEX, `<strong>$2</strong>`);
-    html += `<p>${htmlText}</p>`;
+    html += `${htmlStart}${htmlText}${htmlEnd}`;
   };
 
   function getTextRows(inputValue, width) {
@@ -198,29 +218,29 @@ function generateDeedPoll(form) {
   `, 70, MARGIN_LEFT, MAGIC_NUMBER_3);
   addPara(`
     §§I. §§
-  `, 82, MARGIN_LEFT, MAGIC_NUMBER_3);
+  `, 82, MARGIN_LEFT, MAGIC_NUMBER_3, '<p>', '');
   addPara(`
     §§I ABSOLUTELY§§ and entirely renounce, relinquish and abandon the use of my said former name
     §§${submission.oldName}§§ and assume, adopt and determine to take and use from the date hereof the name of
     §§${submission.newName}§§ in substitution for my former name of §§${submission.oldName}§§
-  `, 82, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - (16 * 3));
+  `, 82, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - (16 * 3), '', '</p>');
   addPara(`
     §§II. §§
-  `, 112, MARGIN_LEFT, MAGIC_NUMBER_3);
+  `, 112, MARGIN_LEFT, MAGIC_NUMBER_3, '<p>', '');
   addPara(`
     §§I SHALL AT ALL TIMES§§ hereafter in all records, deeds documents and other writings and in all actions and
     proceedings as well as in all dealings and transactions and on all occasions whatsoever use and subscribe the
     said name of §§${submission.newName}§§ as my name, in substitution for my former name of
     §§${submission.oldName}§§ so relinquished as aforesaid to the intent that I may hereafter be called known or
     distinguished not by the former name of §§${submission.oldName}§§ but by the name §§${submission.newName}§§
-  `, 112, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - (16 * 3));
+  `, 112, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - (16 * 3), '', '</p>');
   addPara(`
     §§III. §§
-  `, 154, MARGIN_LEFT, MAGIC_NUMBER_3);
+  `, 154, MARGIN_LEFT, MAGIC_NUMBER_3, '<p>', '');
   addPara(`
     §§I AUTHORISE AND REQUIRE§§ all persons at all times to designate, describe, and address me by the adopted
     name of  §§${submission.newName}§§
-  `, 154, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - (16 * 3));
+  `, 154, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - (16 * 3), '', '</p>');
   addPara(`
     §§IN WITNESS§§ whereof I have hereunto subscribed my adopted and substituted name of
     §§${submission.newName}§§ and also my said former name of §§${submission.oldName}§§.
@@ -230,7 +250,7 @@ function generateDeedPoll(form) {
   // TODO: [signatures] by the above name {new} | by the above name {old}
   // TODO: [twice]: witness sigline, name, address
 
-  const title = `Deed Poll for ${submission.newName}`;
+  const title = (submission.newName && submission.newName.trim().length > 0) ? `Deed Poll for ${submission.newName}` : 'Your Deed Poll';
   document.title = title;
 
   const pdfData = doc.output('datauristring');
@@ -264,10 +284,21 @@ function generateDeedPoll(form) {
       <button class="outline" popovertarget="deed-poll-text">Show Text</button>
     </p>
     <p>
-      Print and sign your deed poll, then get started with the next steps:
+      Now you should:
+    </p>
+    <ol>
+      <li>Print your deed poll (print a few copies!)</li>
+      <li>Sign your deed poll in both your old and new names</li>
+      <li>Get your witnesses to sign it, too</li>
+    </ol>
+    <p>
+      Congratulations; that's all you need to do to have legally changed your name! But there's a couple of
+      extra steps you'll want to get started with to make sure that your new name is properly represented
+      everywhere you use it:
     </p>
     <p style="text-align: center;">
-      <a href="/next" role="button" class="outline">What do I do next?</a>
+      <a href="/next" role="button">What do I do next?</a>
+      <a href="/faq" role="button" class="outline">Got more questions?</a>
     </p>
     <p>
       <small>
@@ -285,6 +316,17 @@ function generateDeedPoll(form) {
 }
 
 if(deedPollForm) {
+  // Load from hash:
+  if(window.location.hash.length > 0) {
+    b64ToForm(window.location.hash.slice(1), deedPollForm);
+    generateDeedPoll(deedPollForm);
+  }
+
+  // Pre-set date field if not already set:
+  if(!deedPollForm.querySelector('[data-id="date"]').value) {
+    deedPollForm.querySelector('[data-id="date"]').value = new Date().toISOString().split('T')[0];
+  }
+  
   // Live validation:
   deedPollForm.addEventListener('input', e=>{
     if(e.target.dataset.id == 'skipValidation') return;
