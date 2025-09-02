@@ -20,6 +20,6 @@
         - run: npm run build
 
         - name: Deploy
-          uses: JamesIves/actions-gh-pages@v4
+          uses: actions/deploy-to-github-pages@v4
           with:
             folder: _site
