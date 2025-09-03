@@ -7,7 +7,7 @@
   <title>Free Deed Poll Checklist</title>
   <link rel="stylesheet" href="/fdp.css">
 </head>
-<body class="no-js">
+<body class="no-js" >
   <header class="container-fluid site-header">
     <div class="container title-container">
       <div class="title-icon" aria-hidden="true">📜</div>
@@ -25,8 +25,18 @@
   <nav class="container-fluid site-nav">
     <div class="container">
       <ul>
-        <li><a href="/start">Change your name now!</a></li>
-        <li><a href="/faq">FAQ</a></li>
+        <li class="with-next-step">
+          <a href="/checklist"  aria-current="page">1️⃣ Checklist</a>
+        </li>
+        <li class="with-next-step">
+          <a href="/start" style="font-weight: bold;" >2️⃣ Change your name</a>
+        </li>
+        <li>
+          <a href="/next" >3️⃣ Tell people</a>
+        </li>
+        <li>
+          <a href="/help" role="button" class="outline" >❓ Help&nbsp;</a>
+        </li>
       </ul>
     </div>
   </nav>
@@ -57,18 +67,19 @@
     </label>
     <small>
       The procedure for changing the name of a child under 16 is different, and more-complicated.
+      If you're 16 or 17, <a href="/faq#under-18">see the FAQ</a>.
     </small>
   </li>
 
   <li>
     <input type="checkbox" id="checklist-id">
     <label for="checklist-id">
-      You have government-issued photo ID (optional)
+      You have government-issued photo ID <em>(optional)</em>
     </label>
     <small>
       It's not essential, but if you have a passport, driving licence, or other government-issued photo ID,
-      this will make it much easier for you to prove your change of name to institutions like banks. Note
-      that you may need to renew your ID after changing your name, which can involve a fee.
+      this will make it <em>much easier</em> for you to prove your change of name to institutions like banks.
+      Note that you may need to renew your ID after changing your name, which can involve a fee.
     </small>
   </li>
 
