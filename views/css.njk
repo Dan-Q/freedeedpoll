@@ -83,6 +83,26 @@ body.yes-js .no-js {
 .site-nav {
   background-color: var(--nav-background-color);
   color: var(--nav-color);
+
+  ul {
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+  }
+
+  a {
+    text-wrap: nowrap;
+  }
+}
+
+@media (min-width: 560px) {
+  .with-next-step::after {
+    content: '→';
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--pico-color);
+    padding-left: var(--pico-nav-element-spacing-horizontal);
+  }
 }
 
 /* Main */
