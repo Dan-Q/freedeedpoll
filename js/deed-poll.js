@@ -1,3 +1,4 @@
+import { Temporal } from 'temporal-polyfill'
 import { jsPDF } from "jspdf";
 import '../js/jspdf-font-OldeEnglish-normal.es.js'
 
@@ -5,6 +6,7 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
   function formData(form) {
     let obj = {};
     Array.from(form.elements).filter(e=>e.dataset.id).forEach(e=>{
+      if(e.dataset.dontSave) return;
       if(e.type === 'checkbox') {
         obj[e.dataset.id] = e.checked
       } else {
@@ -22,7 +24,12 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     let obj = JSON.parse(atob(b64));
     Object.entries(obj).forEach(([key, value]) => {
       const element = form.querySelector(`[data-id="${key}"]`);
-      if (element) element.value = value;
+      if(!element) return;
+      if(element.type === 'checkbox') {
+        element.checked = value;
+      } else {
+        element.value = value;
+      }
     });
   }
 
@@ -96,25 +103,31 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     const submission = formData(form);
     let html = '<h2>Deed of Change of Name</h2>';
 
-    const MARGIN_LEFT      =  15   ; // mm
-    const MARGIN_RIGHT     =  15   ; // mm
-    const A4_WIDTH         = 210   ; // mm
-    const TITLE_FONT_SIZE  =  24   ; // points
-    const BODY_FONT_SIZE   =  12   ; // points
-    const BODY_FONT        = 'times';
-    const MAGIC_NUMBER_1   = 135   ; // relates to maximum line length \
-    const MAGIC_NUMBER_2   =   0.35; // relates to letter spacing       | The magic numbers are typeface-specific and
-    const MAGIC_NUMBER_3   = 500   ; // relates to page width           | help with laying out justified content. Ugh.
-    const MAGIC_NUMBER_4   =   0.35; // relates to line spacing        /
+    const MARGIN_LEFT_RIGHT    =  15   ; // mm
+    const A4_WIDTH             = 210   ; // mm
+    const TITLE_FONT_SIZE      =  24   ; // points
+    const BODY_FONT_SIZE       =  11   ; // points
+    const BODY_FONT            = 'times';
+    const MAGIC_NUMBER_1       = 139   ; // relates to maximum line length \
+    const MAGIC_NUMBER_2       =   0.35; // relates to letter spacing       | The magic numbers are typeface-specific and
+    const MAGIC_NUMBER_3       = 506   ; // relates to page width           | help with laying out justified content. Ugh.
+    const MAGIC_NUMBER_4       =   0.31; // relates to line spacing        /
     const ARTICLE_INDENT_DEPTH = 12; // how far to indent the three numbered articles
-    const BOLD_CHAR        = '§'    ;
-    const BOLD_CHAR_REGEX  = new RegExp(`(${RegExp.escape(BOLD_CHAR)}{2})+`, 'g');
-    const BOLD_BLOCK_REGEX = new RegExp(`(${RegExp.escape(BOLD_CHAR)}{2})(.*?)(${RegExp.escape(BOLD_CHAR)}{2})`, 'g');
+    const BOLD_CHAR            = '§'    ;
+    const BOLD_CHAR_REGEX      = new RegExp(`(${RegExp.escape(BOLD_CHAR)}{2})+`, 'g');
+    const BOLD_BLOCK_REGEX     = new RegExp(`(${RegExp.escape(BOLD_CHAR)}{2})(.*?)(${RegExp.escape(BOLD_CHAR)}{2})`, 'g');
 
     doc.setFont('OldeEnglish', 'normal');
     doc.setFontSize(TITLE_FONT_SIZE);
     doc.text(A4_WIDTH / 2, 20, 'Deed of Change of Name', { align: 'center' });
     doc.setFontSize(BODY_FONT_SIZE);
+
+    function getDayOrdinal(num) {
+      if(num === 1 || num === 21 || num === 31) return 'ST';
+      if(num === 2 || num === 22) return 'ND';
+      if(num === 3 || num === 23) return 'RD';
+      return 'TH';
+    }
 
     function addPara(unformattedText, startY, startX, width, htmlStart = '<p>', htmlEnd = '</p>') {
       const text = unformattedText.
@@ -213,48 +226,49 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
       §§BY THIS DEED OF CHANGE OF NAME§§ made by myself the undersigned
       §§${submission.newName}§§ of §§${submission.address}§§ in the County of §§${submission.county}§§
       formerly known as §§${submission.oldName}§§, a British Citizen
-    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3);
+    `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
     pagePosition = addPara(`
       §§HEREBY DECLARE AS FOLLOWS:§§
-    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3);
+    `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
     addPara(`
       §§I. §§
-    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3, '<p>', '');
+    `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3, '<p>', '');
     pagePosition = addPara(`
       §§I ABSOLUTELY§§ and entirely renounce, relinquish and abandon the use of my said former name
       §§${submission.oldName}§§ and assume, adopt and determine to take and use from the date hereof the name of
       §§${submission.newName}§§ in substitution for my former name of §§${submission.oldName}§§
-    `, pagePosition, MARGIN_LEFT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3), '', '</p>');
+    `, pagePosition, MARGIN_LEFT_RIGHT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3), '', '</p>');
     addPara(`
       §§II. §§
-    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3, '<p>', '');
+    `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3, '<p>', '');
     pagePosition = addPara(`
       §§I SHALL AT ALL TIMES§§ hereafter in all records, deeds documents and other writings and in all actions and
       proceedings as well as in all dealings and transactions and on all occasions whatsoever use and subscribe the
       said name of §§${submission.newName}§§ as my name, in substitution for my former name of
       §§${submission.oldName}§§ so relinquished as aforesaid to the intent that I may hereafter be called known or
       distinguished not by the former name of §§${submission.oldName}§§ but by the name §§${submission.newName}§§
-    `, pagePosition, MARGIN_LEFT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3), '', '</p>');
+    `, pagePosition, MARGIN_LEFT_RIGHT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3), '', '</p>');
     addPara(`
       §§III. §§
-    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3, '<p>', '');
+    `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3, '<p>', '');
     pagePosition = addPara(`
       §§I AUTHORISE AND REQUIRE§§ all persons at all times to designate, describe, and address me by the adopted
       name of  §§${submission.newName}§§
-    `, pagePosition, MARGIN_LEFT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3), '', '</p>');
+    `, pagePosition, MARGIN_LEFT_RIGHT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3), '', '</p>');
     pagePosition = addPara(`
       §§IN WITNESS§§ whereof I have hereunto subscribed my adopted and substituted name of
       §§${submission.newName}§§ and also my said former name of §§${submission.oldName}§§.
-    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3);
+    `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
     if(submission.firstNameChanged) {
-      pagePosition = addPara('Notwithstanding the decision of Mr Justice Vaisey in re Parrott, Cox v Parrott, the applicant wishes the enrolment to proceed.', pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3);
+      pagePosition = addPara('Notwithstanding the decision of Mr Justice Vaisey in re Parrott, Cox v Parrott, the applicant wishes the enrolment to proceed.', pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
     }
-    console.log(submission.date);
-    // pagePosition = addPara(`
-    //   SIGNED AS A DEED THIS ${submission.date.split('-')[2].ordinalize().upcase} DAY OF ${submission.date.split('-')[1].upcase} IN THE YEAR ${submission.date.split('-')[0]}
-    // `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3);
+    const date = Temporal.PlainDate.from(submission.date);
+    const day = parseInt(date.toLocaleString('en-GB', { day: 'numeric' }));
+    const dayOrdinal = getDayOrdinal(day);
+    const month = date.toLocaleString('en-GB', { month: 'long' }).toUpperCase();
+    const year = date.toLocaleString('en-GB', { year: 'numeric' });
+    pagePosition = addPara(`§§SIGNED AS A DEED THIS ${day}${dayOrdinal} DAY OF ${month} IN THE YEAR ${year}§§`, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
 
-    // TODO: SIGNED AS A DEED THIS #{day.ordinalize.upcase} DAY OF #{month.upcase} IN THE YEAR #{year}
     // TODO: [signatures] by the above name {new} | by the above name {old}
     // TODO: [twice]: witness sigline, name, address
 
