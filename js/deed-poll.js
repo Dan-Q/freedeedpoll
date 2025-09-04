@@ -108,7 +108,7 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     const TITLE_FONT_SIZE      =  24   ; // points
     const BODY_FONT_SIZE       =  11   ; // points
     const BODY_FONT            = 'times';
-    const MAGIC_NUMBER_1       = 139   ; // relates to maximum line length \
+    const MAGIC_NUMBER_1       = 141   ; // relates to maximum line length \
     const MAGIC_NUMBER_2       =   0.35; // relates to letter spacing       | The magic numbers are typeface-specific and
     const MAGIC_NUMBER_3       = 506   ; // relates to page width           | help with laying out justified content. Ugh.
     const MAGIC_NUMBER_4       =   0.31; // relates to line spacing        /
