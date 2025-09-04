@@ -14,7 +14,7 @@ export default async function(eleventyConfig) {
           entryPoints: [data.page.inputPath],
           outfile: data.page.outputPath,
           bundle: true,
-          minify: false,
+          minify: true,
         });
         return result.code;
       };
