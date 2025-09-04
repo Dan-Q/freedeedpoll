@@ -32778,7 +32778,6 @@
     const deedPollValidationErrorsList = document.getElementById("deed-poll-validation-errors-list");
     const deedPollSkipValidation = document.getElementById("skip-validation");
     function validateDeedPoll(form, disallowBlanks = false) {
-      console.log("validateDeedPoll", form, disallowBlanks);
       const submission = formData(form);
       if (!submission) return true;
       const validationErrors = [];
@@ -32826,7 +32825,7 @@
     }
     function generateDeedPoll(form) {
       window.location.hash = formToB64(form);
-      const doc = new jsPDF();
+      const doc = new E();
       const submission = formData(form);
       let html2 = "<h2>Deed of Change of Name</h2>";
       const MARGIN_LEFT = 15;
@@ -32834,17 +32833,18 @@
       const A4_WIDTH = 210;
       const TITLE_FONT_SIZE = 24;
       const BODY_FONT_SIZE = 12;
-      const MAGIC_NUMBER_1 = 175;
+      const BODY_FONT = "Times-Roman";
+      const MAGIC_NUMBER_1 = 135;
       const MAGIC_NUMBER_2 = 0.35;
       const MAGIC_NUMBER_3 = 500;
-      const MAGIC_NUMBER_4 = 0.4;
+      const MAGIC_NUMBER_4 = 0.35;
+      const ARTICLE_INDENT_DEPTH = 12;
       const BOLD_CHAR = "\xA7";
       const BOLD_CHAR_REGEX = new RegExp(`(${RegExp.escape(BOLD_CHAR)}{2})+`, "g");
       const BOLD_BLOCK_REGEX = new RegExp(`(${RegExp.escape(BOLD_CHAR)}{2})(.*?)(${RegExp.escape(BOLD_CHAR)}{2})`, "g");
       doc.setFont("OldeEnglish", "normal");
       doc.setFontSize(TITLE_FONT_SIZE);
       doc.text(A4_WIDTH / 2, 30, "Deed of Change of Name", { align: "center" });
-      doc.setFont("Helvetica", "normal");
       doc.setFontSize(BODY_FONT_SIZE);
       function addPara(unformattedText, startY, startX, width, htmlStart = "<p>", htmlEnd = "</p>") {
         const text2 = unformattedText.replace(`${BOLD_CHAR}${BOLD_CHAR}${BOLD_CHAR}${BOLD_CHAR}`, "").replace(/[\n ]+/g, " ").trim();
@@ -32854,12 +32854,12 @@
         let textObject = getTextRows(text2, width);
         textObject.map((row, rowPosition) => {
           Object.entries(row.chars).map(([key, value]) => {
-            doc.setFont("Helvetica", value.bold ? "bold" : "normal");
+            doc.setFont(BODY_FONT, value.bold ? "bold" : "normal");
             doc.text(startX, startY, value.char);
             if (value.char == " " && rowPosition < textObject.length - 1) {
               startX += row.blankSpacing * MAGIC_NUMBER_2;
             } else {
-              startX += doc.getStringUnitWidth(value.char) * BODY_FONT_SIZE * MAGIC_NUMBER_2;
+              startX += doc.getStringUnitWidth(value.char) * (BODY_FONT_SIZE * MAGIC_NUMBER_2);
             }
           });
           startX = startXCached;
@@ -32867,6 +32867,7 @@
         });
         const htmlText = text2.replace(BOLD_BLOCK_REGEX, `<strong>$2</strong>`);
         html2 += `${htmlStart}${htmlText}${htmlEnd}`;
+        return startY + lineSpacing;
       }
       ;
       function getTextRows(inputValue, width) {
@@ -32899,7 +32900,7 @@
           let charsWihoutsSpacing = Object.entries(chars).filter(([key, value]) => value.char != " ");
           let widthRow = 0;
           charsWihoutsSpacing.forEach(([key, value]) => {
-            doc.setFont("Helvetica", value.bold ? "bold" : "normal");
+            doc.setFont(BODY_FONT, value.bold ? "bold" : "normal");
             widthRow += doc.getStringUnitWidth(value.char) * BODY_FONT_SIZE;
           });
           let totalBlankSpaces = charsMap.length - charsWihoutsSpacing.length;
@@ -32908,43 +32909,44 @@
         });
         return textRows;
       }
-      addPara(`
+      let pagePosition = 45;
+      pagePosition = addPara(`
       \xA7\xA7BY THIS DEED OF CHANGE OF NAME\xA7\xA7 made by myself the undersigned
       \xA7\xA7${submission.newName}\xA7\xA7 of \xA7\xA7${submission.address}\xA7\xA7 in the County of \xA7\xA7${submission.county}\xA7\xA7
       formerly known as \xA7\xA7${submission.oldName}\xA7\xA7, a British Citizen
-    `, 45, MARGIN_LEFT, MAGIC_NUMBER_3);
-      addPara(`
+    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3);
+      pagePosition = addPara(`
       \xA7\xA7HEREBY DECLARE AS FOLLOWS:\xA7\xA7
-    `, 70, MARGIN_LEFT, MAGIC_NUMBER_3);
+    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3);
       addPara(`
       \xA7\xA7I. \xA7\xA7
-    `, 82, MARGIN_LEFT, MAGIC_NUMBER_3, "<p>", "");
-      addPara(`
+    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3, "<p>", "");
+      pagePosition = addPara(`
       \xA7\xA7I ABSOLUTELY\xA7\xA7 and entirely renounce, relinquish and abandon the use of my said former name
       \xA7\xA7${submission.oldName}\xA7\xA7 and assume, adopt and determine to take and use from the date hereof the name of
       \xA7\xA7${submission.newName}\xA7\xA7 in substitution for my former name of \xA7\xA7${submission.oldName}\xA7\xA7
-    `, 82, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - 16 * 3, "", "</p>");
+    `, pagePosition, MARGIN_LEFT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - ARTICLE_INDENT_DEPTH * 3, "", "</p>");
       addPara(`
       \xA7\xA7II. \xA7\xA7
-    `, 112, MARGIN_LEFT, MAGIC_NUMBER_3, "<p>", "");
-      addPara(`
+    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3, "<p>", "");
+      pagePosition = addPara(`
       \xA7\xA7I SHALL AT ALL TIMES\xA7\xA7 hereafter in all records, deeds documents and other writings and in all actions and
       proceedings as well as in all dealings and transactions and on all occasions whatsoever use and subscribe the
       said name of \xA7\xA7${submission.newName}\xA7\xA7 as my name, in substitution for my former name of
       \xA7\xA7${submission.oldName}\xA7\xA7 so relinquished as aforesaid to the intent that I may hereafter be called known or
       distinguished not by the former name of \xA7\xA7${submission.oldName}\xA7\xA7 but by the name \xA7\xA7${submission.newName}\xA7\xA7
-    `, 112, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - 16 * 3, "", "</p>");
+    `, pagePosition, MARGIN_LEFT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - ARTICLE_INDENT_DEPTH * 3, "", "</p>");
       addPara(`
       \xA7\xA7III. \xA7\xA7
-    `, 154, MARGIN_LEFT, MAGIC_NUMBER_3, "<p>", "");
-      addPara(`
+    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3, "<p>", "");
+      pagePosition = addPara(`
       \xA7\xA7I AUTHORISE AND REQUIRE\xA7\xA7 all persons at all times to designate, describe, and address me by the adopted
       name of  \xA7\xA7${submission.newName}\xA7\xA7
-    `, 154, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - 16 * 3, "", "</p>");
-      addPara(`
+    `, pagePosition, MARGIN_LEFT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - ARTICLE_INDENT_DEPTH * 3, "", "</p>");
+      pagePosition = addPara(`
       \xA7\xA7IN WITNESS\xA7\xA7 whereof I have hereunto subscribed my adopted and substituted name of
       \xA7\xA7${submission.newName}\xA7\xA7 and also my said former name of \xA7\xA7${submission.oldName}\xA7\xA7.
-    `, 174, MARGIN_LEFT, MAGIC_NUMBER_3);
+    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3);
       const title = submission.newName && submission.newName.trim().length > 0 ? `Deed Poll for ${submission.newName}` : "Your Deed Poll";
       document.title = title;
       const pdfData = doc.output("datauristring");
