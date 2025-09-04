@@ -114,8 +114,8 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     const MAGIC_NUMBER_4       =   0.31; // relates to line spacing        /
     const ARTICLE_INDENT_DEPTH = 12; // how far to indent the three numbered articles
     const BOLD_CHAR            = '§'    ;
-    const BOLD_CHAR_REGEX      = new RegExp(`(${RegExp.escape(BOLD_CHAR)}{2})+`, 'g');
-    const BOLD_BLOCK_REGEX     = new RegExp(`(${RegExp.escape(BOLD_CHAR)}{2})(.*?)(${RegExp.escape(BOLD_CHAR)}{2})`, 'g');
+    const BOLD_CHAR_REGEX      = new RegExp(`(${RegExp.escape(BOLD_CHAR)})`, 'g');
+    const BOLD_BLOCK_REGEX     = new RegExp(`(${RegExp.escape(BOLD_CHAR)})(.*?)(${RegExp.escape(BOLD_CHAR)})`, 'g');
 
     doc.setFont('OldeEnglish', 'normal');
     doc.setFontSize(TITLE_FONT_SIZE);
@@ -131,7 +131,7 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
 
     function addPara(unformattedText, startY, startX, width, htmlStart = '<p>', htmlEnd = '</p>') {
       const text = unformattedText.
-        replace(`${BOLD_CHAR}${BOLD_CHAR}${BOLD_CHAR}${BOLD_CHAR}`, ''). // remove empty bold blocks
+        replace(`${BOLD_CHAR}${BOLD_CHAR}`, ''). // remove empty bold blocks
         replace(/[\n ]+/g, ' ').trim(); // remove space
 
       // Add to PDF:
@@ -173,32 +173,37 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
 
       let charsMapLength = 0;
       let position = 0;
+      let positionOffsetForEOLBoldToggles = 0;
       let isBold = false;
 
       let textRows = splitTextWithoutBoldMarks.map((row, i) => {
           const charsMap = row.split('');
 
+          let willToggleBoldAtEndOfLine = false;
           const chars = charsMap.map((char, j) => {
-            position = charsMapLength + j + i;
+            position = charsMapLength + j + i + positionOffsetForEOLBoldToggles;
 
             let currentChar = inputValue.charAt(position);
 
             if (currentChar === BOLD_CHAR) {
-              const spyNextChar = inputValue.charAt(position + 1);
-              if (spyNextChar === BOLD_CHAR) {
-              // double asterix marker exist on these position's so we toggle the bold state
               isBold = !isBold;
-              currentChar = inputValue.charAt(position + 2);
+              currentChar = inputValue.charAt(position + 1);
 
-                // now we remove the markers, so loop jumps to the next real printable char
-                let removeMarks = inputValue.split('');
-                removeMarks.splice(position, 2);
-                inputValue = removeMarks.join('');
-              }
+              // now we remove the marker, so loop jumps to the next real printable char
+              let removeMarks = inputValue.split('');
+              removeMarks.splice(position, 1);
+              inputValue = removeMarks.join('');
+            }
+
+            // Special case: if we're at the END of a line and the next character would be a bold character, toggle bold now:
+            if(j === charsMap.length - 1 && inputValue.charAt(position + 1) === BOLD_CHAR) {
+              willToggleBoldAtEndOfLine = true;
+              positionOffsetForEOLBoldToggles += 1;
             }
 
             return { char: currentChar, bold: isBold };
           });
+          if(willToggleBoldAtEndOfLine) isBold = !isBold;
           charsMapLength += charsMap.length;
 
           // Calculate the size of the white space to justify the text
@@ -223,41 +228,41 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     let pagePosition = 35;
 
     pagePosition = addPara(`
-      §§BY THIS DEED OF CHANGE OF NAME§§ made by myself the undersigned
-      §§${submission.newName}§§ of §§${submission.address}§§ in the County of §§${submission.county}§§
-      formerly known as §§${submission.oldName}§§, a British Citizen
+      §BY THIS DEED OF CHANGE OF NAME§ made by myself the undersigned
+      §${submission.newName}§ of §${submission.address}§ in the County of §${submission.county}§
+      formerly known as §${submission.oldName}§, a British Citizen
     `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
     pagePosition = addPara(`
-      §§HEREBY DECLARE AS FOLLOWS:§§
+      §HEREBY DECLARE AS FOLLOWS:§
     `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
     addPara(`
-      §§I. §§
+      §I. §
     `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3, '<p>', '');
     pagePosition = addPara(`
-      §§I ABSOLUTELY§§ and entirely renounce, relinquish and abandon the use of my said former name
-      §§${submission.oldName}§§ and assume, adopt and determine to take and use from the date hereof the name of
-      §§${submission.newName}§§ in substitution for my former name of §§${submission.oldName}§§
+      §I ABSOLUTELY§ and entirely renounce, relinquish and abandon the use of my said former name
+      §${submission.oldName}§ and assume, adopt and determine to take and use from the date hereof the name of
+      §${submission.newName}§ in substitution for my former name of §${submission.oldName}§
     `, pagePosition, MARGIN_LEFT_RIGHT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3), '', '</p>');
     addPara(`
-      §§II. §§
+      §II. §
     `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3, '<p>', '');
     pagePosition = addPara(`
-      §§I SHALL AT ALL TIMES§§ hereafter in all records, deeds documents and other writings and in all actions and
+      §I SHALL AT ALL TIMES§ hereafter in all records, deeds documents and other writings and in all actions and
       proceedings as well as in all dealings and transactions and on all occasions whatsoever use and subscribe the
-      said name of §§${submission.newName}§§ as my name, in substitution for my former name of
-      §§${submission.oldName}§§ so relinquished as aforesaid to the intent that I may hereafter be called known or
-      distinguished not by the former name of §§${submission.oldName}§§ but by the name §§${submission.newName}§§
+      said name of §${submission.newName}§ as my name, in substitution for my former name of
+      §${submission.oldName}§ so relinquished as aforesaid to the intent that I may hereafter be called known or
+      distinguished not by the former name of §${submission.oldName}§ but by the name §${submission.newName}§
     `, pagePosition, MARGIN_LEFT_RIGHT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3), '', '</p>');
     addPara(`
-      §§III. §§
+      §III. §
     `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3, '<p>', '');
     pagePosition = addPara(`
-      §§I AUTHORISE AND REQUIRE§§ all persons at all times to designate, describe, and address me by the adopted
-      name of  §§${submission.newName}§§
+      §I AUTHORISE AND REQUIRE§ all persons at all times to designate, describe, and address me by the adopted
+      name of  §${submission.newName}§
     `, pagePosition, MARGIN_LEFT_RIGHT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3), '', '</p>');
     pagePosition = addPara(`
-      §§IN WITNESS§§ whereof I have hereunto subscribed my adopted and substituted name of
-      §§${submission.newName}§§ and also my said former name of §§${submission.oldName}§§.
+      §IN WITNESS§ whereof I have hereunto subscribed my adopted and substituted name of
+      §${submission.newName}§ and also my said former name of §${submission.oldName}§.
     `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
     if(submission.firstNameChanged) {
       pagePosition = addPara('Notwithstanding the decision of Mr Justice Vaisey in re Parrott, Cox v Parrott, the applicant wishes the enrolment to proceed.', pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
@@ -267,7 +272,7 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     const dayOrdinal = getDayOrdinal(day);
     const month = date.toLocaleString('en-GB', { month: 'long' }).toUpperCase();
     const year = date.toLocaleString('en-GB', { year: 'numeric' });
-    pagePosition = addPara(`§§SIGNED AS A DEED THIS ${day}${dayOrdinal} DAY OF ${month} IN THE YEAR ${year}§§`, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
+    pagePosition = addPara(`§SIGNED AS A DEED THIS ${day}${dayOrdinal} DAY OF ${month} IN THE YEAR ${year}§`, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
 
     // TODO: [signatures] by the above name {new} | by the above name {old}
     // TODO: [twice]: witness sigline, name, address
