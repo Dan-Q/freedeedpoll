@@ -1,3 +1,5 @@
+import { jsPDF } from "jspdf";
+
 (()=>{
   function formData(form) {
     let obj = {};
@@ -32,7 +34,6 @@
   const deedPollSkipValidation = document.getElementById('skip-validation');
 
   function validateDeedPoll(form, disallowBlanks = false) {
-    console.log('validateDeedPoll', form, disallowBlanks);
     const submission = formData(form);
     if(!submission) return true;
     const validationErrors = [];
@@ -99,10 +100,12 @@
     const A4_WIDTH         = 210   ; // mm
     const TITLE_FONT_SIZE  =  24   ; // points
     const BODY_FONT_SIZE   =  12   ; // points
-    const MAGIC_NUMBER_1   = 175   ;
-    const MAGIC_NUMBER_2   =   0.35;
-    const MAGIC_NUMBER_3   = 500   ;
-    const MAGIC_NUMBER_4   =   0.4 ;
+    const BODY_FONT        = 'Times-Roman';
+    const MAGIC_NUMBER_1   = 135   ; // relates to maximum line length \
+    const MAGIC_NUMBER_2   =   0.35; // relates to letter spacing       | The magic numbers are typeface-specific and
+    const MAGIC_NUMBER_3   = 500   ; // relates to page width           | help with laying out justified content. Ugh.
+    const MAGIC_NUMBER_4   =   0.35; // relates to line spacing        /
+    const ARTICLE_INDENT_DEPTH = 12; // how far to indent the three numbered articles
     const BOLD_CHAR        = '§'    ;
     const BOLD_CHAR_REGEX  = new RegExp(`(${RegExp.escape(BOLD_CHAR)}{2})+`, 'g');
     const BOLD_BLOCK_REGEX = new RegExp(`(${RegExp.escape(BOLD_CHAR)}{2})(.*?)(${RegExp.escape(BOLD_CHAR)}{2})`, 'g');
@@ -110,7 +113,6 @@
     doc.setFont('OldeEnglish', 'normal');
     doc.setFontSize(TITLE_FONT_SIZE);
     doc.text(A4_WIDTH / 2, 30, 'Deed of Change of Name', { align: 'center' });
-    doc.setFont('Helvetica', 'normal');
     doc.setFontSize(BODY_FONT_SIZE);
 
     function addPara(unformattedText, startY, startX, width, htmlStart = '<p>', htmlEnd = '</p>') {
@@ -121,19 +123,19 @@
       
       // Add to PDF:
       const startXCached = startX;
-      const lineSpacing = doc.getLineHeightFactor() + BODY_FONT_SIZE * MAGIC_NUMBER_4;
+      const lineSpacing = doc.getLineHeightFactor() + (BODY_FONT_SIZE * MAGIC_NUMBER_4);
     
       let textObject = getTextRows(text, width);
 
       textObject.map((row, rowPosition) => {
         Object.entries(row.chars).map(([key, value]) => {
-          doc.setFont('Helvetica', value.bold ? 'bold' : 'normal');
+          doc.setFont(BODY_FONT, value.bold ? 'bold' : 'normal');
           doc.text(startX, startY, value.char);
         
           if(value.char == ' ' && rowPosition < textObject.length - 1){
             startX += row.blankSpacing * MAGIC_NUMBER_2;
           } else {
-            startX += doc.getStringUnitWidth(value.char) * BODY_FONT_SIZE * MAGIC_NUMBER_2;
+            startX += doc.getStringUnitWidth(value.char) * (BODY_FONT_SIZE * MAGIC_NUMBER_2);
           }
         });
         startX = startXCached;
@@ -143,6 +145,9 @@
       // Add to HTML:
       const htmlText = text.replace(BOLD_BLOCK_REGEX, `<strong>$2</strong>`);
       html += `${htmlStart}${htmlText}${htmlEnd}`;
+
+      // Work out new page position based on height of added text, and return it:
+      return startY + lineSpacing;
     };
 
     function getTextRows(inputValue, width) {
@@ -189,7 +194,7 @@
 
           charsWihoutsSpacing.forEach(([key, value]) => {
             // Keep in mind that the calculations are affected if the letter is in bold or normal
-            doc.setFont('Helvetica', value.bold ? 'bold' : 'normal');
+            doc.setFont(BODY_FONT, value.bold ? 'bold' : 'normal');
             widthRow += doc.getStringUnitWidth(value.char) * BODY_FONT_SIZE;
           });
 
@@ -202,43 +207,45 @@
         return textRows;
     }
 
-    addPara(`
+    let pagePosition = 45;
+
+    pagePosition = addPara(`
       §§BY THIS DEED OF CHANGE OF NAME§§ made by myself the undersigned
       §§${submission.newName}§§ of §§${submission.address}§§ in the County of §§${submission.county}§§
       formerly known as §§${submission.oldName}§§, a British Citizen
-    `, 45, MARGIN_LEFT, MAGIC_NUMBER_3);
-    addPara(`
+    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3);
+    pagePosition = addPara(`
       §§HEREBY DECLARE AS FOLLOWS:§§
-    `, 70, MARGIN_LEFT, MAGIC_NUMBER_3);
+    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3);
     addPara(`
       §§I. §§
-    `, 82, MARGIN_LEFT, MAGIC_NUMBER_3, '<p>', '');
-    addPara(`
+    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3, '<p>', '');
+    pagePosition = addPara(`
       §§I ABSOLUTELY§§ and entirely renounce, relinquish and abandon the use of my said former name
       §§${submission.oldName}§§ and assume, adopt and determine to take and use from the date hereof the name of
       §§${submission.newName}§§ in substitution for my former name of §§${submission.oldName}§§
-    `, 82, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - (16 * 3), '', '</p>');
+    `, pagePosition, MARGIN_LEFT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3), '', '</p>');
     addPara(`
       §§II. §§
-    `, 112, MARGIN_LEFT, MAGIC_NUMBER_3, '<p>', '');
-    addPara(`
+    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3, '<p>', '');
+    pagePosition = addPara(`
       §§I SHALL AT ALL TIMES§§ hereafter in all records, deeds documents and other writings and in all actions and
       proceedings as well as in all dealings and transactions and on all occasions whatsoever use and subscribe the
       said name of §§${submission.newName}§§ as my name, in substitution for my former name of
       §§${submission.oldName}§§ so relinquished as aforesaid to the intent that I may hereafter be called known or
       distinguished not by the former name of §§${submission.oldName}§§ but by the name §§${submission.newName}§§
-    `, 112, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - (16 * 3), '', '</p>');
+    `, pagePosition, MARGIN_LEFT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3), '', '</p>');
     addPara(`
       §§III. §§
-    `, 154, MARGIN_LEFT, MAGIC_NUMBER_3, '<p>', '');
-    addPara(`
+    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3, '<p>', '');
+    pagePosition = addPara(`
       §§I AUTHORISE AND REQUIRE§§ all persons at all times to designate, describe, and address me by the adopted
       name of  §§${submission.newName}§§
-    `, 154, MARGIN_LEFT + 16, MAGIC_NUMBER_3 - (16 * 3), '', '</p>');
-    addPara(`
+    `, pagePosition, MARGIN_LEFT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3), '', '</p>');
+    pagePosition = addPara(`
       §§IN WITNESS§§ whereof I have hereunto subscribed my adopted and substituted name of
       §§${submission.newName}§§ and also my said former name of §§${submission.oldName}§§.
-    `, 174, MARGIN_LEFT, MAGIC_NUMBER_3);
+    `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3);
     // TODO: Notwithstanding the decision of Mr Justice Vaisey in re Parrott, Cox v Parrott, the applicant wishes the enrolment to proceed.
     // TODO: SIGNED AS A DEED THIS #{day.ordinalize.upcase} DAY OF #{month.upcase} IN THE YEAR #{year}
     // TODO: [signatures] by the above name {new} | by the above name {old}
