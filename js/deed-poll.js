@@ -1,4 +1,5 @@
 import { jsPDF } from "jspdf";
+import '../js/jspdf-font-OldeEnglish-normal.es.js'
 
 (()=>{
   function formData(form) {
@@ -112,7 +113,7 @@ import { jsPDF } from "jspdf";
 
     doc.setFont('OldeEnglish', 'normal');
     doc.setFontSize(TITLE_FONT_SIZE);
-    doc.text(A4_WIDTH / 2, 30, 'Deed of Change of Name', { align: 'center' });
+    doc.text(A4_WIDTH / 2, 20, 'Deed of Change of Name', { align: 'center' });
     doc.setFontSize(BODY_FONT_SIZE);
 
     function addPara(unformattedText, startY, startX, width, htmlStart = '<p>', htmlEnd = '</p>') {
@@ -207,7 +208,7 @@ import { jsPDF } from "jspdf";
         return textRows;
     }
 
-    let pagePosition = 45;
+    let pagePosition = 35;
 
     pagePosition = addPara(`
       §§BY THIS DEED OF CHANGE OF NAME§§ made by myself the undersigned
