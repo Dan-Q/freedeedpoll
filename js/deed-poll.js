@@ -49,7 +49,7 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
 
     if(submission.newName === submission.oldName) validationErrors.push({ field: 'newName', message: 'The "old name" and "new name" are the same.' });
     if(!submission.oldName.match(/\S+\s+\S+/)) validationErrors.push({ field: 'oldName', message: 'Your old name looks like it only contains one name.' });
-    if(!submission.newName.match(/\S+\s+\S+/)) validationErrors.push({ field: 'newName', message: 'Your new name looks like it only contains one name.' });  
+    if(!submission.newName.match(/\S+\s+\S+/)) validationErrors.push({ field: 'newName', message: 'Your new name looks like it only contains one name.' });
     if(!submission.newName.match(/^[a-z\s\-\']+$/i)) validationErrors.push({ field: 'newName', message: `
       Your new name contains characters that don't appear in the Latin alphabet. This isn't necessarily a problem, but your name may be
       adapted for use in some contexts (e.g. your Passport may require a Latinised version of your name).
@@ -101,7 +101,7 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     const A4_WIDTH         = 210   ; // mm
     const TITLE_FONT_SIZE  =  24   ; // points
     const BODY_FONT_SIZE   =  12   ; // points
-    const BODY_FONT        = 'Times-Roman';
+    const BODY_FONT        = 'times';
     const MAGIC_NUMBER_1   = 135   ; // relates to maximum line length \
     const MAGIC_NUMBER_2   =   0.35; // relates to letter spacing       | The magic numbers are typeface-specific and
     const MAGIC_NUMBER_3   = 500   ; // relates to page width           | help with laying out justified content. Ugh.
@@ -120,19 +120,18 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
       const text = unformattedText.
         replace(`${BOLD_CHAR}${BOLD_CHAR}${BOLD_CHAR}${BOLD_CHAR}`, ''). // remove empty bold blocks
         replace(/[\n ]+/g, ' ').trim(); // remove space
-      console.log(text);
-      
+
       // Add to PDF:
       const startXCached = startX;
       const lineSpacing = doc.getLineHeightFactor() + (BODY_FONT_SIZE * MAGIC_NUMBER_4);
-    
+
       let textObject = getTextRows(text, width);
 
       textObject.map((row, rowPosition) => {
         Object.entries(row.chars).map(([key, value]) => {
           doc.setFont(BODY_FONT, value.bold ? 'bold' : 'normal');
           doc.text(startX, startY, value.char);
-        
+
           if(value.char == ' ' && rowPosition < textObject.length - 1){
             startX += row.blankSpacing * MAGIC_NUMBER_2;
           } else {
@@ -204,7 +203,7 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
 
           return {blankSpacing: blankSpacing, chars: { ...chars }};
         });
-      
+
         return textRows;
     }
 
@@ -247,12 +246,23 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
       §§IN WITNESS§§ whereof I have hereunto subscribed my adopted and substituted name of
       §§${submission.newName}§§ and also my said former name of §§${submission.oldName}§§.
     `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3);
-    // TODO: Notwithstanding the decision of Mr Justice Vaisey in re Parrott, Cox v Parrott, the applicant wishes the enrolment to proceed.
+    if(submission.firstNameChanged) {
+      pagePosition = addPara('Notwithstanding the decision of Mr Justice Vaisey in re Parrott, Cox v Parrott, the applicant wishes the enrolment to proceed.', pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3);
+    }
+    console.log(submission.date);
+    // pagePosition = addPara(`
+    //   SIGNED AS A DEED THIS ${submission.date.split('-')[2].ordinalize().upcase} DAY OF ${submission.date.split('-')[1].upcase} IN THE YEAR ${submission.date.split('-')[0]}
+    // `, pagePosition, MARGIN_LEFT, MAGIC_NUMBER_3);
+
     // TODO: SIGNED AS A DEED THIS #{day.ordinalize.upcase} DAY OF #{month.upcase} IN THE YEAR #{year}
     // TODO: [signatures] by the above name {new} | by the above name {old}
     // TODO: [twice]: witness sigline, name, address
 
-    const title = (submission.newName && submission.newName.trim().length > 0) ? `Deed Poll for ${submission.newName}` : 'Your Deed Poll';
+    // TODO: detect pagePosition going "off the end" and advise the user accordingly
+
+    const title = (submission.newName && submission.newName.trim().length > 0 && submission.newName.trim().length < 32) ?
+      `Deed Poll for ${submission.newName}` :
+      'Your Deed Poll';
     document.title = title;
 
     const pdfData = doc.output('datauristring');
@@ -313,7 +323,7 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     `;
     deedPollResult.hidden = false;
     deedPollModify.hidden = false;
-    
+
     h1.scrollIntoView({ behavior: 'smooth' });
   }
 
@@ -328,7 +338,7 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     if(!deedPollForm.querySelector('[data-id="date"]').value) {
       deedPollForm.querySelector('[data-id="date"]').value = new Date().toISOString().split('T')[0];
     }
-    
+
     // Live validation:
     deedPollForm.addEventListener('input', e=>{
       if(e.target.dataset.id == 'skipValidation') return;
