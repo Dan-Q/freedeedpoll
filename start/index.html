@@ -48,13 +48,20 @@
 
 <div class="no-js">
   <p>
-    This part of the website requires JavaScript to be enabled, but your browser
-    hasn't managed to run it.
+    This part of the website requires JavaScript to be enabled
+    (<a href="/faq/#javascript">why?</a>),
+    but your browser hasn't managed to run it.
   </p>
 </div>
 
 <article id="deed-poll-result" aria-live="polite" hidden></article>
 <h2 id="deed-poll-modify" hidden>Modify your deed poll</h2>
+
+<p>
+  Once you've <a href="/checklist">read the checklist</a> and
+  <a href="/faq">had any questions answered</a>, fill out the form below
+  to create your deed poll:
+</p>
 
 <form id="deed-poll" class="yes-js">
   <p>
@@ -104,6 +111,28 @@
     <small>
       The date you will sign your deed poll and on which your name will legally be changed.
     </small>
+  </p>
+  <p>
+    <label for="first-witness-name">First witness's name:</label>
+    <input type="text" id="first-witness-name" data-id="firstWitnessName">
+    <small>
+      (<a href="/faq/#witnesses">Who can be a witness?</a>)
+    </small>
+  </p>
+  <p>
+    <label for="first-witness-address">First witness's address:</label>
+    <input type="text" id="first-witness-address" data-id="firstWitnessAddress">
+  </p>
+  <p>
+    <label for="second-witness-name">Second witness's name:</label>
+    <input type="text" id="second-witness-name" data-id="secondWitnessName">
+    <small>
+      (<a href="/faq/#witnesses">Who can be a witness?</a>)
+    </small>
+  </p>
+  <p>
+    <label for="second-witness-address">Second witness's address:</label>
+    <input type="text" id="second-witness-address" data-id="secondWitnessAddress">
   </p>
 
   <article id="deed-poll-validation-errors" hidden>
