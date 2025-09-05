@@ -24,4 +24,9 @@ export default async function(eleventyConfig) {
     &copy; Copyright 2011 - ${new Date().getFullYear()}
     <a href="https://danq.me/">Dan Q</a>
   `);
+
+  // Passthrough copies
+  eleventyConfig.addPassthroughCopy('views/icon-maskable.png');
+  eleventyConfig.addPassthroughCopy('views/icon-rounded.png');
+  eleventyConfig.addPassthroughCopy('views/manifest.json');
 };
