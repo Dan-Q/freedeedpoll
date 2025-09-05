@@ -348,7 +348,6 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
 
     // Detect pagePosition going "off the end" of the page and advise the user accordingly:
     const pdfTooLong = (pagePosition >= 287);
-    console.log(pagePosition, pdfTooLong);
 
     const title = (submission.newName && submission.newName.trim().length > 0 && submission.newName.trim().length < 32) ?
       `Deed Poll for ${submission.newName}` :
