@@ -52,24 +52,37 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
       if(submission.address === '') validationErrors.push({ field: 'address', message: 'The "address" field is blank.' });
       if(submission.county === '') validationErrors.push({ field: 'county', message: 'The "county" field is blank.' });
       if(submission.date === '') validationErrors.push({ field: 'date', message: 'The "date" field is blank.' });
+      if(submission.firstWitnessName === '') validationErrors.push({ field: 'firstWitnessName', message: 'The "first witness\'s name" field is blank.' });
+      if(submission.firstWitnessAddress === '') validationErrors.push({ field: 'firstWitnessAddress', message: 'The "first witness\'s address" field is blank.' });
+      if(submission.secondWitnessName === '') validationErrors.push({ field: 'secondWitnessName', message: 'The "second witness\'s name" field is blank.' });
+      if(submission.secondWitnessAddress === '') validationErrors.push({ field: 'secondWitnessAddress', message: 'The "second witness\'s address" field is blank.' });
     }
 
     if(submission.newName === submission.oldName) validationErrors.push({ field: 'newName', message: 'The "old name" and "new name" are the same.' });
-    if(!submission.oldName.match(/\S+\s+\S+/)) validationErrors.push({ field: 'oldName', message: 'Your old name looks like it only contains one name.' });
-    if(!submission.newName.match(/\S+\s+\S+/)) validationErrors.push({ field: 'newName', message: 'Your new name looks like it only contains one name.' });
+    if(!submission.oldName.match(/\S+\s+\S+/)) validationErrors.push({ field: 'oldName', message: `
+      Your old name looks like it only contains one name.
+      If that's correct, that's fine, but please check!
+    ` });
+    if(!submission.newName.match(/\S+\s+\S+/)) validationErrors.push({ field: 'newName', message: `
+      Your new name looks like it only contains one name.
+      (<a href="/faq/#legal-restrictions">Why is this a problem?</a>)
+    ` });
     if(!submission.newName.match(/^[a-z\s\-\']+$/i)) validationErrors.push({ field: 'newName', message: `
       Your new name contains characters that don't appear in the Latin alphabet. This isn't necessarily a problem, but your name may be
       adapted for use in some contexts (e.g. your Passport may require a Latinised version of your name).
+      (<a href="/faq/#legal-restrictions">Why is this a problem?</a>)
     `});
     const suspectedOldFirstName = submission.oldName.split(' ')[0];
     const suspectedNewFirstName = submission.newName.split(' ')[0];
     if(suspectedOldFirstName !== suspectedNewFirstName && !submission.firstNameChanged)
       validationErrors.push({ field: 'firstNameChanged', message: `
         It looks like you've changed your first name, but not ticked the "I've changed my first name" box.
+        (<a href="/faq/#vaisey">Why does this matter?</a>)
       `});
     if(suspectedOldFirstName == suspectedNewFirstName && submission.firstNameChanged)
       validationErrors.push({ field: 'firstNameChanged', message: `
         You've ticked the "I've changed my first name" box, but it doesn't look like you haven't changed your first name.
+        (<a href="/faq/#vaisey">Why does this matter?</a>)
       `});
 
     // Show validation errors:
@@ -101,6 +114,27 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
 
     const doc = new jsPDF();
     const submission = formData(form);
+
+    // Data tidyup
+    submission.oldName = submission.oldName.trim();
+    if(submission.oldName == '') submission.oldName = '________________';
+    submission.newName = submission.newName.trim();
+    if(submission.newName == '') submission.newName = '________________';
+    submission.address = submission.address.trim();
+    if(submission.address == '') submission.address = '________________________';
+    submission.county = submission.county.trim();
+    if(submission.county == '') submission.county = '________________';
+    submission.date = submission.date.trim();
+    if(submission.date == '') submission.date = Temporal.Now.plainDateISO().toString();
+    submission.firstWitnessName = submission.firstWitnessName.trim();
+    if(submission.firstWitnessName == '') submission.firstWitnessName = '________________';
+    submission.firstWitnessAddress = submission.firstWitnessAddress.trim();
+    if(submission.firstWitnessAddress == '') submission.firstWitnessAddress = '________________________';
+    submission.secondWitnessName = submission.secondWitnessName.trim();
+    if(submission.secondWitnessName == '') submission.secondWitnessName = '________________';
+    submission.secondWitnessAddress = submission.secondWitnessAddress.trim();
+    if(submission.secondWitnessAddress == '') submission.secondWitnessAddress = '________________________';
+
     let html = '<h2>Deed of Change of Name</h2>';
 
     const MARGIN_LEFT_RIGHT    =  15   ; // mm
@@ -274,10 +308,49 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     const year = date.toLocaleString('en-GB', { year: 'numeric' });
     pagePosition = addPara(`§SIGNED AS A DEED THIS ${day}${dayOrdinal} DAY OF ${month} IN THE YEAR ${year}§`, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
 
-    // TODO: [signatures] by the above name {new} | by the above name {old}
-    // TODO: [twice]: witness sigline, name, address
+    // Signatures:
+    pagePosition += 20;
+    const line1Left = (MARGIN_LEFT_RIGHT * 1.5);
+    const line1Right = (A4_WIDTH / 2) - (MARGIN_LEFT_RIGHT * 0.75);
+    const line2Left = (A4_WIDTH / 2) + (MARGIN_LEFT_RIGHT * 0.75);
+    const line2Right = (A4_WIDTH) - (MARGIN_LEFT_RIGHT * 1.5);
+    const line1Center = (line1Left + line1Right) / 2;
+    const line2Center = (line2Left + line2Right) / 2;
+    doc.line(line1Left, pagePosition, line1Right, pagePosition);
+    doc.line(line2Left, pagePosition, line2Right, pagePosition);
 
-    // TODO: detect pagePosition going "off the end" and advise the user accordingly
+    html += `<p>By the above name ${submission.newName}: ____________________</p>`;
+    html += `<p>By the above name ${submission.oldName}: ____________________</p>`;
+    html += `<p>____________________<br>${submission.firstWitnessName}<br>${submission.firstWitnessAddress}</p>`;
+    html += `<p>____________________<br>${submission.secondWitnessName}<br>${submission.secondWitnessAddress}</p>`;
+
+    // Names:
+    pagePosition += 5;
+    doc.setFont(BODY_FONT, 'normal');
+    doc.text(`by the above name`, line1Center, pagePosition, { maxWidth: line1Right - line1Left, align: 'center' });
+    doc.text(`by the above name`, line2Center, pagePosition, { maxWidth: line2Right - line2Left, align: 'center' });
+    pagePosition += 5;
+    doc.setFont(BODY_FONT, 'bold');
+    doc.text(submission.newName, line1Center, pagePosition, { maxWidth: line1Right - line1Left, align: 'center' });
+    doc.text(submission.oldName, line2Center, pagePosition, { maxWidth: line2Right - line2Left, align: 'center' });
+
+    // Witness signatures:
+    pagePosition += 25;
+    doc.line(line1Left, pagePosition, line1Right, pagePosition);
+    doc.line(line2Left, pagePosition, line2Right, pagePosition);
+
+    // Witness details:
+    pagePosition += 5;
+    doc.setFont(BODY_FONT, 'normal');
+    doc.text(submission.firstWitnessName, line1Center, pagePosition, { maxWidth: line1Right - line1Left, align: 'center' });
+    doc.text(submission.secondWitnessName, line2Center, pagePosition, { maxWidth: line2Right - line2Left, align: 'center' });
+    pagePosition += 5;
+    doc.text(submission.firstWitnessAddress, line1Center, pagePosition, { maxWidth: line1Right - line1Left, align: 'center' });
+    doc.text(submission.secondWitnessAddress, line2Center, pagePosition, { maxWidth: line2Right - line2Left, align: 'center' });
+
+    // Detect pagePosition going "off the end" of the page and advise the user accordingly:
+    const pdfTooLong = (pagePosition >= 287);
+    console.log(pagePosition, pdfTooLong);
 
     const title = (submission.newName && submission.newName.trim().length > 0 && submission.newName.trim().length < 32) ?
       `Deed Poll for ${submission.newName}` :
@@ -304,21 +377,37 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     `;
 
     h1.innerText = title;
+    let buttons = `
+      <a href="${pdfData}" role="button" target="_blank">${pdfTooLong ? '⚠️ ' : ''}PDF</a>
+      <a href="${pdfData}" role="button" class="secondary" download="deed-poll.pdf">${pdfTooLong ? '⚠️ ' : ''}Download PDF</a>
+      <button class="outline" popovertarget="deed-poll-text">Show Text</button>
+    `;
+    if(pdfTooLong) {
+      buttons = `
+        ⚠️ <strong>Warning:</strong> Your PDF deed poll turned out too long to fit onto the page.
+        You'll need to use the "Show Text" button to get the text of your deed poll and copy-paste it into
+        a document for yourself.
+        (<a href="/faq/#pdf-too-long">Why is this happening?</a>)
+        <br><br>
+      ` + buttons;
+    }
     deedPollResult.innerHTML = `
       ${html}
       <p>
         Your deed poll is ready to print and use:
       </p>
-      <p style="text-align: center;">
-        <a href="${pdfData}" role="button" target="_blank">View PDF</a>
-        <a href="${pdfData}" role="button" class="secondary" download="deed-poll.pdf">Download PDF</a>
-        <button class="outline" popovertarget="deed-poll-text">Show Text</button>
+      <p style="text-align: center;">${buttons}</p>
+      <p>
+        <small>
+          Made a mistake? Scroll down and edit the form to correct them, then click
+          "Create Deed Poll" again.
+        </small>
       </p>
       <p>
         Now you should:
       </p>
       <ol>
-        <li>Print your deed poll (print a few copies!)</li>
+        <li>Print your deed poll (print <a href="/faq/#multiple-originals">a few copies</a>!)</li>
         <li>Sign your deed poll in both your old and new names</li>
         <li>Get your witnesses to sign it, too</li>
       </ol>
