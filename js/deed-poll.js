@@ -50,7 +50,6 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
       if(submission.oldName === '') validationErrors.push({ field: 'oldName', message: 'The "old name" field is blank.' });
       if(submission.newName === '') validationErrors.push({ field: 'newName', message: 'The "new name" field is blank.' });
       if(submission.address === '') validationErrors.push({ field: 'address', message: 'The "address" field is blank.' });
-      if(submission.county === '') validationErrors.push({ field: 'county', message: 'The "county" field is blank.' });
       if(submission.date === '') validationErrors.push({ field: 'date', message: 'The "date" field is blank.' });
       if(submission.firstWitnessName === '') validationErrors.push({ field: 'firstWitnessName', message: 'The "first witness\'s name" field is blank.' });
       if(submission.firstWitnessAddress === '') validationErrors.push({ field: 'firstWitnessAddress', message: 'The "first witness\'s address" field is blank.' });
@@ -123,7 +122,6 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     submission.address = submission.address.trim();
     if(submission.address == '') submission.address = '________________________';
     submission.county = submission.county.trim();
-    if(submission.county == '') submission.county = '________________';
     submission.date = submission.date.trim();
     if(submission.date == '') submission.date = Temporal.Now.plainDateISO().toString();
     submission.firstWitnessName = submission.firstWitnessName.trim();
@@ -260,10 +258,10 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     }
 
     let pagePosition = 35;
-
+    const countyLine = submission.county == '' ? '' : ` in the County of §${submission.county}§`
     pagePosition = addPara(`
       §BY THIS DEED OF CHANGE OF NAME§ made by myself the undersigned
-      §${submission.newName}§ of §${submission.address}§ in the County of §${submission.county}§
+      §${submission.newName}§ of §${submission.address}§${countyLine}
       formerly known as §${submission.oldName}§, a British Citizen
     `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
     pagePosition = addPara(`
