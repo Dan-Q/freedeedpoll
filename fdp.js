@@ -123,7 +123,7 @@ end`};e.events.push(["putFont",function(i){(function(s){var a=s.font,o=s.out,c=s
     `,cA,b+z,eA-z*3,"","</p>"),W(`
       \xA7III. \xA7
     `,cA,b,eA,"<p>",""),cA=W(`
-      \xA7I AUTHORISE AND REQUIRE\xA7 all persons at all times to designate, describe, and address me by the adopted
+      \xA7I AUTHORISE AND REQUIRE\xA7 all persons at all times to designate, describe and address me by the adopted
       name of  \xA7${Q.newName}\xA7
     `,cA,b+z,eA-z*3,"","</p>"),cA=W(`
       \xA7IN WITNESS\xA7 whereof I have hereunto subscribed my adopted and substituted name of
