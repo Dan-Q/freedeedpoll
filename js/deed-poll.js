@@ -291,7 +291,7 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
       §III. §
     `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3, '<p>', '');
     pagePosition = addPara(`
-      §I AUTHORISE AND REQUIRE§ all persons at all times to designate, describe, and address me by the adopted
+      §I AUTHORISE AND REQUIRE§ all persons at all times to designate, describe and address me by the adopted
       name of  §${submission.newName}§
     `, pagePosition, MARGIN_LEFT_RIGHT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3), '', '</p>');
     pagePosition = addPara(`
