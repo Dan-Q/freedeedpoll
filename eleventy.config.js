@@ -29,4 +29,5 @@ export default async function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy('views/icon-maskable.png');
   eleventyConfig.addPassthroughCopy('views/icon-rounded.png');
   eleventyConfig.addPassthroughCopy('views/manifest.json');
+  eleventyConfig.addPassthroughCopy('views/CNAME');
 };
