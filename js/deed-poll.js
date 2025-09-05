@@ -133,7 +133,7 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     submission.secondWitnessAddress = submission.secondWitnessAddress.trim();
     if(submission.secondWitnessAddress == '') submission.secondWitnessAddress = '________________________';
 
-    let html = '<h2>Deed of Change of Name</h2>';
+    let html = '<h2 style="text-decoration: underline;">Deed of Change of Name</h2>';
 
     const MARGIN_LEFT_RIGHT    =  15   ; // mm
     const A4_WIDTH             = 210   ; // mm
@@ -152,6 +152,7 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     doc.setFont('OldeEnglish', 'normal');
     doc.setFontSize(TITLE_FONT_SIZE);
     doc.text(A4_WIDTH / 2, 20, 'Deed of Change of Name', { align: 'center' });
+    doc.line(70, 23, A4_WIDTH - 70, 23);
     doc.setFontSize(BODY_FONT_SIZE);
 
     function getDayOrdinal(num) {
