@@ -186,3 +186,30 @@ body.yes-js .no-js {
     display: none;
   }
 }
+
+/* Aspect ratio detection for YouTube videos */
+
+.youtube {
+  width: 100%;
+  height: auto;
+  max-height: 95vh
+}
+
+.youtube.landscape-only {
+  aspect-ratio: 16 / 9;
+}
+.youtube.portrait-only {
+  aspect-ratio: 9 / 16;
+}
+
+.portrait-only {
+  display: none;
+}
+@media (orientation: portrait) {
+  .portrait-only {
+    display: unset;
+  }
+  .landscape-only {
+    display: none;
+  }
+}
