@@ -13,6 +13,10 @@ To use the site online, just:
 4. Sign it and have two witnesses sign it
 5. Send it off to everybody who needs to know your new name!
 
+https://github.com/user-attachments/assets/8e0e2c72-6d01-4cfe-8a2d-ce32bc0cce85
+
+([video available in higher-definition on YouTube](https://www.youtube.com/watch?v=O-easX_LDuk))
+
 To use it on your own computer, follow the development instructions below.
 
 ## Development
