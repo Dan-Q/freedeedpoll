@@ -355,7 +355,7 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
       'Your Deed Poll';
     document.title = title;
 
-    const pdfData = doc.output('datauristring');
+    const pdfData = doc.output('bloburi');
     html = `
       <div id="deed-poll-text" popover>
         <header>
