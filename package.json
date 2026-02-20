@@ -25,7 +25,7 @@
     "@11ty/eleventy": "^3.1.2",
     "@picocss/pico": "^2.1.1",
     "esbuild": "^0.25.9",
-    "jspdf": "^4.1.0",
+    "jspdf": "^4.2.0",
     "temporal-polyfill": "^0.3.0"
   }
 }
