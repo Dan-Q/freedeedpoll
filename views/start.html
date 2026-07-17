@@ -45,7 +45,7 @@ layout: layout.njk
     <label for="address">Address:</label>
     <input type="text" id="address" data-id="address" autocomplete="street-address">
     <small>
-      Your address. Put the street address and the town/city name. You don't have to include the county or postcode, but if you do then - for consistency - you should also include these elements in your witnesses' addresses too.
+      Your address. Put the street address, town/city name, and postcode. You don't have to include the county. Include the country only if it's not the UK.
     </small>
   </p>
   <p>
@@ -72,6 +72,9 @@ layout: layout.njk
   <p>
     <label for="first-witness-address">First witness's address:</label>
     <input type="text" id="first-witness-address" data-id="firstWitnessAddress">
+    <small>
+      Include the street address, town/city name, and postcode.
+    </small>
   </p>
   <p>
     <label for="second-witness-name">Second witness's name:</label>
@@ -83,6 +86,9 @@ layout: layout.njk
   <p>
     <label for="second-witness-address">Second witness's address:</label>
     <input type="text" id="second-witness-address" data-id="secondWitnessAddress">
+    <small>
+      Include the street address, town/city name, and postcode.
+    </small>
   </p>
 
   <article id="deed-poll-validation-errors" hidden>
