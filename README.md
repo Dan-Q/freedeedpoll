@@ -23,7 +23,7 @@ To use it on your own computer, follow the development instructions below.
 
 ### Development dependencies
 
-- NodeJS v18+
+- NodeJS v22+
 
 ### Setting up a development environment
 
@@ -31,6 +31,11 @@ To use it on your own computer, follow the development instructions below.
 2. Run `npm i` to install dependencies
 3. Run `npm start` to run a development server
 4. Visit http://localhost:8080/
+
+### Running the tests
+
+Run `npm test` to run the unit tests (using [Vitest](https://vitest.dev/)). `npm run test:watch` re-runs on code change.
+Tests run automatically on GitHub for every PR.
 
 ## Deployment
 
