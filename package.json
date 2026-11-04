@@ -5,7 +5,8 @@
     "start": "eleventy --serve",
     "build": "eleventy",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "temporal-polyfill": "^0.3.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "vitest": "^5.1.0"
   },
   "engines": {

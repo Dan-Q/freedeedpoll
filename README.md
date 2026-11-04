@@ -1,7 +1,7 @@
 # Free Deed Poll
 
 A modern tool to produce PDF and HTML deeds poll that can be used by British citizens to legally change their name.
-Runs entirely in the browser.
+Runs entirely in the browser for maximum privacy: none of your personal information is shared with the site owner.
 
 ## Usage
 
@@ -34,8 +34,11 @@ To use it on your own computer, follow the development instructions below.
 
 ### Running the tests
 
-Run `npm test` to run the unit tests (using [Vitest](https://vitest.dev/)). `npm run test:watch` re-runs on code change.
-Tests run automatically on GitHub for every PR.
+**Unit tests** ([Vitest](https://vitest.dev/)) live in `test/` and cover the logic in `js/lib/`. Run them with `npm test`, or `npm run test:watch` to re-run them as you change the code.
+
+**End-to-end tests** ([Playwright](https://playwright.dev/)) live in `e2e/`; they build the site and drive it in real browsers (Chromium, Firefox and WebKit). Install the browsers with `npx playwright install`, then run them with `npm run test:e2e`. Add `-- --headed` to watch them as they go or `-- --ui` for interactive debugging.
+
+Both run automatically on GitHub for every pull request.
 
 ## Deployment
 
