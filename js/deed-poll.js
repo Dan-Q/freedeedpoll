@@ -1,38 +1,14 @@
-import { Temporal } from 'temporal-polyfill'
 import { jsPDF } from "jspdf";
 import '../js/jspdf-font-OldeEnglish-normal.es.js'
+import { formData, formToB64, b64ToForm } from './lib/form-state.js'
+import { validateSubmission } from './lib/validation.js'
+import { BOLD_CHAR, tidySubmission, deedClauses, deedTitle } from './lib/deed-text.js'
+import {
+  BODY_FONT_SIZE, BODY_FONT, MAGIC_NUMBER_2, MAGIC_NUMBER_3, MAGIC_NUMBER_4,
+  cleanParaText, boldMarksToHtml, getTextRows
+} from './lib/text-layout.js'
 
 (()=>{
-  function formData(form) {
-    let obj = {};
-    Array.from(form.elements).filter(e=>e.dataset.id).forEach(e=>{
-      if(e.dataset.dontSave) return;
-      if(e.type === 'checkbox') {
-        obj[e.dataset.id] = e.checked
-      } else {
-        obj[e.dataset.id] = e.value;
-      }
-    });
-    return obj;
-  }
-
-  function formToB64(form) {
-    return btoa(JSON.stringify(formData(form)));
-  }
-
-  function b64ToForm(b64, form) {
-    let obj = JSON.parse(atob(b64));
-    Object.entries(obj).forEach(([key, value]) => {
-      const element = form.querySelector(`[data-id="${key}"]`);
-      if(!element) return;
-      if(element.type === 'checkbox') {
-        element.checked = value;
-      } else {
-        element.value = value;
-      }
-    });
-  }
-
   const h1 = document.querySelector('h1');
   const deedPollForm = document.getElementById('deed-poll');
   const deedPollResult = document.getElementById('deed-poll-result');
@@ -42,47 +18,7 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
   const deedPollSkipValidation = document.getElementById('skip-validation');
 
   function validateDeedPoll(form, disallowBlanks = false) {
-    const submission = formData(form);
-    if(!submission) return true;
-    const validationErrors = [];
-
-    if(disallowBlanks) {
-      if(submission.oldName === '') validationErrors.push({ field: 'oldName', message: 'The "old name" field is blank.' });
-      if(submission.newName === '') validationErrors.push({ field: 'newName', message: 'The "new name" field is blank.' });
-      if(submission.address === '') validationErrors.push({ field: 'address', message: 'The "address" field is blank.' });
-      if(submission.date === '') validationErrors.push({ field: 'date', message: 'The "date" field is blank.' });
-      if(submission.firstWitnessName === '') validationErrors.push({ field: 'firstWitnessName', message: 'The "first witness\'s name" field is blank.' });
-      if(submission.firstWitnessAddress === '') validationErrors.push({ field: 'firstWitnessAddress', message: 'The "first witness\'s address" field is blank.' });
-      if(submission.secondWitnessName === '') validationErrors.push({ field: 'secondWitnessName', message: 'The "second witness\'s name" field is blank.' });
-      if(submission.secondWitnessAddress === '') validationErrors.push({ field: 'secondWitnessAddress', message: 'The "second witness\'s address" field is blank.' });
-    }
-
-    if(submission.newName === submission.oldName) validationErrors.push({ field: 'newName', message: 'The "old name" and "new name" are the same.' });
-    if(!submission.oldName.match(/\S+\s+\S+/)) validationErrors.push({ field: 'oldName', message: `
-      Your old name looks like it only contains one name.
-      If that's correct, that's fine, but please check!
-    ` });
-    if(!submission.newName.match(/\S+\s+\S+/)) validationErrors.push({ field: 'newName', message: `
-      Your new name looks like it only contains one name.
-      (<a href="/faq/#legal-restrictions">Why is this a problem?</a>)
-    ` });
-    if(!submission.newName.match(/^[a-z\s\-\']+$/i)) validationErrors.push({ field: 'newName', message: `
-      Your new name contains characters that don't appear in the Latin alphabet. This isn't necessarily a problem, but your name may be
-      adapted for use in some contexts (e.g. your Passport may require a Latinised version of your name).
-      (<a href="/faq/#legal-restrictions">Why is this a problem?</a>)
-    `});
-    const suspectedOldFirstName = submission.oldName.split(' ')[0];
-    const suspectedNewFirstName = submission.newName.split(' ')[0];
-    if(suspectedOldFirstName !== suspectedNewFirstName && !submission.firstNameChanged)
-      validationErrors.push({ field: 'firstNameChanged', message: `
-        It looks like you've changed your first name, but not ticked the "I've changed my first name" box.
-        (<a href="/faq/#vaisey">Why does this matter?</a>)
-      `});
-    if(suspectedOldFirstName == suspectedNewFirstName && submission.firstNameChanged)
-      validationErrors.push({ field: 'firstNameChanged', message: `
-        You've ticked the "I've changed my first name" box, but it doesn't look like you haven't changed your first name.
-        (<a href="/faq/#vaisey">Why does this matter?</a>)
-      `});
+    const validationErrors = validateSubmission(formData(form), disallowBlanks);
 
     // Show validation errors:
     if(validationErrors.length > 0) {
@@ -112,42 +48,14 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     window.location.hash = formToB64(form);
 
     const doc = new jsPDF();
-    const submission = formData(form);
-
-    // Data tidyup
-    submission.oldName = submission.oldName.trim();
-    if(submission.oldName == '') submission.oldName = '________________';
-    submission.newName = submission.newName.trim();
-    if(submission.newName == '') submission.newName = '________________';
-    submission.address = submission.address.trim();
-    if(submission.address == '') submission.address = '________________________';
-    submission.county = submission.county.trim();
-    submission.date = submission.date.trim();
-    if(submission.date == '') submission.date = Temporal.Now.plainDateISO().toString();
-    submission.firstWitnessName = submission.firstWitnessName.trim();
-    if(submission.firstWitnessName == '') submission.firstWitnessName = '________________';
-    submission.firstWitnessAddress = submission.firstWitnessAddress.trim();
-    if(submission.firstWitnessAddress == '') submission.firstWitnessAddress = '________________________';
-    submission.secondWitnessName = submission.secondWitnessName.trim();
-    if(submission.secondWitnessName == '') submission.secondWitnessName = '________________';
-    submission.secondWitnessAddress = submission.secondWitnessAddress.trim();
-    if(submission.secondWitnessAddress == '') submission.secondWitnessAddress = '________________________';
+    const submission = tidySubmission(formData(form));
 
     let html = '<h2 style="text-decoration: underline;">Deed of Change of Name</h2>';
 
     const MARGIN_LEFT_RIGHT    =  15   ; // mm
     const A4_WIDTH             = 210   ; // mm
     const TITLE_FONT_SIZE      =  24   ; // points
-    const BODY_FONT_SIZE       =  11   ; // points
-    const BODY_FONT            = 'times';
-    const MAGIC_NUMBER_1       = 141   ; // relates to maximum line length \
-    const MAGIC_NUMBER_2       =   0.35; // relates to letter spacing       | The magic numbers are typeface-specific and
-    const MAGIC_NUMBER_3       = 506   ; // relates to page width           | help with laying out justified content. Ugh.
-    const MAGIC_NUMBER_4       =   0.31; // relates to line spacing        /
     const ARTICLE_INDENT_DEPTH = 12; // how far to indent the three numbered articles
-    const BOLD_CHAR            = '§'    ;
-    const BOLD_CHAR_REGEX      = new RegExp(`(${RegExp.escape(BOLD_CHAR)})`, 'g');
-    const BOLD_BLOCK_REGEX     = new RegExp(`(${RegExp.escape(BOLD_CHAR)})(.*?)(${RegExp.escape(BOLD_CHAR)})`, 'g');
 
     doc.setFont('OldeEnglish', 'normal');
     doc.setFontSize(TITLE_FONT_SIZE);
@@ -155,23 +63,14 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     doc.line(70, 23, A4_WIDTH - 70, 23);
     doc.setFontSize(BODY_FONT_SIZE);
 
-    function getDayOrdinal(num) {
-      if(num === 1 || num === 21 || num === 31) return 'ST';
-      if(num === 2 || num === 22) return 'ND';
-      if(num === 3 || num === 23) return 'RD';
-      return 'TH';
-    }
-
     function addPara(unformattedText, startY, startX, width, htmlStart = '<p>', htmlEnd = '</p>') {
-      const text = unformattedText.
-        replace(`${BOLD_CHAR}${BOLD_CHAR}`, ''). // remove empty bold blocks
-        replace(/[\n ]+/g, ' ').trim(); // remove space
+      const text = cleanParaText(unformattedText);
 
       // Add to PDF:
       const startXCached = startX;
       const lineSpacing = doc.getLineHeightFactor() + (BODY_FONT_SIZE * MAGIC_NUMBER_4);
 
-      let textObject = getTextRows(text, width);
+      let textObject = getTextRows(doc, text, width);
 
       textObject.map((row, rowPosition) => {
         Object.entries(row.chars).map(([key, value]) => {
@@ -189,123 +88,28 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
       });
 
       // Add to HTML:
-      const htmlText = text.replace(BOLD_BLOCK_REGEX, `<strong>$2</strong>`);
-      html += `${htmlStart}${htmlText}${htmlEnd}`;
+      html += `${htmlStart}${boldMarksToHtml(text)}${htmlEnd}`;
 
       // Work out new page position based on height of added text, and return it:
       return startY + lineSpacing;
     };
 
-    function getTextRows(inputValue, width) {
-      const textWithoutBoldMarks = inputValue.replace(BOLD_CHAR_REGEX, '');
-
-      let splitTextWithoutBoldMarks = doc.splitTextToSize(
-        textWithoutBoldMarks,
-        MAGIC_NUMBER_1
-      );
-
-      let charsMapLength = 0;
-      let position = 0;
-      let positionOffsetForEOLBoldToggles = 0;
-      let isBold = false;
-
-      let textRows = splitTextWithoutBoldMarks.map((row, i) => {
-          const charsMap = row.split('');
-
-          let willToggleBoldAtEndOfLine = false;
-          const chars = charsMap.map((char, j) => {
-            position = charsMapLength + j + i + positionOffsetForEOLBoldToggles;
-
-            let currentChar = inputValue.charAt(position);
-
-            if (currentChar === BOLD_CHAR) {
-              isBold = !isBold;
-              currentChar = inputValue.charAt(position + 1);
-
-              // now we remove the marker, so loop jumps to the next real printable char
-              let removeMarks = inputValue.split('');
-              removeMarks.splice(position, 1);
-              inputValue = removeMarks.join('');
-            }
-
-            // Special case: if we're at the END of a line and the next character would be a bold character, toggle bold now:
-            if(j === charsMap.length - 1 && inputValue.charAt(position + 1) === BOLD_CHAR) {
-              willToggleBoldAtEndOfLine = true;
-              positionOffsetForEOLBoldToggles += 1;
-            }
-
-            return { char: currentChar, bold: isBold };
-          });
-          if(willToggleBoldAtEndOfLine) isBold = !isBold;
-          charsMapLength += charsMap.length;
-
-          // Calculate the size of the white space to justify the text
-          let charsWihoutsSpacing = Object.entries(chars).filter(([key, value]) => value.char != ' ');
-          let widthRow = 0;
-
-          charsWihoutsSpacing.forEach(([key, value]) => {
-            // Keep in mind that the calculations are affected if the letter is in bold or normal
-            doc.setFont(BODY_FONT, value.bold ? 'bold' : 'normal');
-            widthRow += doc.getStringUnitWidth(value.char) * BODY_FONT_SIZE;
-          });
-
-          let totalBlankSpaces = charsMap.length - charsWihoutsSpacing.length;
-          let blankSpacing = (width - widthRow) / totalBlankSpaces;
-
-          return {blankSpacing: blankSpacing, chars: { ...chars }};
-        });
-
-        return textRows;
-    }
+    const clauses = deedClauses(submission);
+    const articleX = MARGIN_LEFT_RIGHT + ARTICLE_INDENT_DEPTH;
+    const articleWidth = MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3);
 
     let pagePosition = 35;
-    const countyLine = submission.county == '' ? '' : ` in the County of §${submission.county}§`
-    pagePosition = addPara(`
-      §BY THIS DEED OF CHANGE OF NAME§ made by myself the undersigned
-      §${submission.newName}§ of §${submission.address}§${countyLine}
-      formerly known as §${submission.oldName}§, a British Citizen
-    `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
-    pagePosition = addPara(`
-      §HEREBY DECLARE AS FOLLOWS:§
-    `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
-    addPara(`
-      §I. §
-    `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3, '<p>', '');
-    pagePosition = addPara(`
-      §I ABSOLUTELY§ and entirely renounce, relinquish and abandon the use of my said former name
-      §${submission.oldName}§ and assume, adopt and determine to take and use from the date hereof the name of
-      §${submission.newName}§ in substitution for my former name of §${submission.oldName}§
-    `, pagePosition, MARGIN_LEFT_RIGHT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3), '', '</p>');
-    addPara(`
-      §II. §
-    `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3, '<p>', '');
-    pagePosition = addPara(`
-      §I SHALL AT ALL TIMES§ hereafter in all records, deeds documents and other writings and in all actions and
-      proceedings as well as in all dealings and transactions and on all occasions whatsoever use and subscribe the
-      said name of §${submission.newName}§ as my name, in substitution for my former name of
-      §${submission.oldName}§ so relinquished as aforesaid to the intent that I may hereafter be called known or
-      distinguished not by the former name of §${submission.oldName}§ but by the name §${submission.newName}§
-    `, pagePosition, MARGIN_LEFT_RIGHT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3), '', '</p>');
-    addPara(`
-      §III. §
-    `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3, '<p>', '');
-    pagePosition = addPara(`
-      §I AUTHORISE AND REQUIRE§ all persons at all times to designate, describe and address me by the adopted
-      name of  §${submission.newName}§
-    `, pagePosition, MARGIN_LEFT_RIGHT + ARTICLE_INDENT_DEPTH, MAGIC_NUMBER_3 - (ARTICLE_INDENT_DEPTH * 3), '', '</p>');
-    pagePosition = addPara(`
-      §IN WITNESS§ whereof I have hereunto subscribed my adopted and substituted name of
-      §${submission.newName}§ and also my said former name of §${submission.oldName}§.
-    `, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
-    if(submission.firstNameChanged) {
-      pagePosition = addPara('Notwithstanding the decision of Mr Justice Vaisey in re Parrott, Cox v Parrott, the applicant wishes the enrolment to proceed.', pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
+    pagePosition = addPara(clauses.preamble, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
+    pagePosition = addPara(clauses.declaration, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
+    clauses.articles.forEach(article => {
+      addPara(`${BOLD_CHAR}${article.numeral} ${BOLD_CHAR}`, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3, '<p>', '');
+      pagePosition = addPara(article.text, pagePosition, articleX, articleWidth, '', '</p>');
+    });
+    pagePosition = addPara(clauses.witness, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
+    if(clauses.vaisey) {
+      pagePosition = addPara(clauses.vaisey, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
     }
-    const date = Temporal.PlainDate.from(submission.date);
-    const day = parseInt(date.toLocaleString('en-GB', { day: 'numeric' }));
-    const dayOrdinal = getDayOrdinal(day);
-    const month = date.toLocaleString('en-GB', { month: 'long' }).toUpperCase();
-    const year = date.toLocaleString('en-GB', { year: 'numeric' });
-    pagePosition = addPara(`§SIGNED AS A DEED THIS ${day}${dayOrdinal} DAY OF ${month} IN THE YEAR ${year}§`, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
+    pagePosition = addPara(clauses.signed, pagePosition, MARGIN_LEFT_RIGHT, MAGIC_NUMBER_3);
 
     // Signatures:
     pagePosition += 20;
@@ -350,9 +154,7 @@ import '../js/jspdf-font-OldeEnglish-normal.es.js'
     // Detect pagePosition going "off the end" of the page and advise the user accordingly:
     const pdfTooLong = (pagePosition >= 287);
 
-    const title = (submission.newName && submission.newName.trim().length > 0 && submission.newName.trim().length < 32) ?
-      `Deed Poll for ${submission.newName}` :
-      'Your Deed Poll';
+    const title = deedTitle(submission.newName);
     document.title = title;
 
     const pdfData = doc.output('bloburi');
