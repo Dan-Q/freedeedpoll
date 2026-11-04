@@ -6,7 +6,11 @@ on:
   workflow_dispatch:
 
 jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+
   build:
+    needs: test
     runs-on: ubuntu-latest
 
     steps:
@@ -15,6 +19,8 @@ jobs:
 
       - name: Build
         uses: actions/setup-node@v4
+        with:
+          node-version: 24
       - run: npm ci
       - run: npm run build
 
